@@ -56,6 +56,10 @@ Abre el navegador (modo visible) y ejecuta todos los flujos en secuencia. Al fin
 ### Herramientas de diagnóstico
 
 ```bash
+# Capturar selectores en tiempo real: navega manualmente y cada click
+# imprime en consola el tag, id, clases, atributos y selector CSS del elemento
+python capturar_selectores.py
+
 # Capturar HTML de productos para inspeccionar selectores
 python diagnostico.py
 # → genera diagnostico_productos.html (abrir en navegador)
@@ -155,8 +159,8 @@ Botón principal:
 |----------|----------|
 | Botones de selección (slot) | `button.tono_select_opt.nobg[btn-show-types-tones-modal]` |
 | Opciones dentro del modal | `button[btn-eligelo]` |
-| Botón confirmar selección | `button#btn-aplicar-seleccion` |
-| Señal de requisito cumplido | texto `¡Listo!` visible en el modal |
+| Botón confirmar selección (activo/negro) | `button#btn-aplicar-seleccion.active` |
+| Título con cantidad requerida | `h3[header-title]` → texto `"Elige X opción(es)"` |
 
 ### Carrusel vertical "Ofertas recomendadas para ti" (venta_1)
 | Elemento | Selector |
@@ -221,6 +225,6 @@ El archivo `eventos_analytics.json` contiene un array de eventos GA4 con la estr
 - El bot usa la **API síncrona** de Playwright (`sync_playwright`)
 - Los eventos GA4 se interceptan escuchando requests POST a `*/collect*`
 - Screenshots de debug se guardan automáticamente en `debug/` cuando ocurre un error (nombre + timestamp)
-- Las PDPs con selección obligatoria detectan el requisito cumplido leyendo el texto **"¡Listo!"** en el título del modal (aparece cuando se alcanza la cantidad mínima requerida)
+- Las PDPs con selección obligatoria leen el título `h3[header-title]` del modal que dice **"Elige X opción(es)"** para saber cuántas opciones seleccionar. Se extraen con regex y se clickean exactamente esa cantidad antes de confirmar
 - En las PDPs hay múltiples `a#btnAgregalo` (producto principal + sección de recomendaciones). Se usa `.btn_validar_alertas` para apuntar únicamente al botón del producto
 - `#alertDialogMensajesGenerales` puede aparecer durante el flujo de selección; se maneja con `_cerrar_alerta_general()` llamado explícitamente (no con handler automático, para no interferir con los modales de selección)

@@ -419,64 +419,83 @@ def pdp_agregar(page):
                     _cerrar_alerta_general(page)
                     continue
 
-                total_opts = opciones.count()
-                print(f"      {total_opts} opción(es) disponibles")
+                # Leer la cantidad requerida desde el título del modal
+                # h3[header-title] → texto "Elige X opción(es)"
+                requeridos = 1
+                try:
+                    import re
+                    titulo = page.locator("h3[header-title]")
+                    if titulo.count():
+                        texto_titulo = titulo.first.inner_text().strip()
+                        match = re.search(r'\d+', texto_titulo)
+                        if match:
+                            requeridos = int(match.group())
+                            print(f"      📌 '{texto_titulo}' → seleccionar {requeridos}")
+                except Exception:
+                    pass
 
-                # Seleccionar de a una y parar en cuanto el título del modal
-                # diga "¡Listo!" (requisito cumplido). El check va DESPUÉS del
-                # click, no antes, para que el DOM pueda actualizarse.
-                for j in range(total_opts):
-                    opciones.nth(j).click()
-                    print(f"      ✔️  Opción {j+1}/{total_opts} seleccionada")
-                    page.wait_for_timeout(600)
-                    _cerrar_alerta_general(page)
-                    try:
-                        if page.locator("text=¡Listo!").is_visible(timeout=500):
-                            print(f"      ✔️  Requisito cumplido con {j+1} selección(es)")
-                            break
-                    except Exception:
-                        pass
-
-                # Confirmar — el botón no requiere clase .active para ser clickeable
-                confirmar = page.locator("button#btn-aplicar-seleccion")
-                for intento in range(3):
-                    try:
-                        confirmar.wait_for(state="visible", timeout=4000)
-                        confirmar.click()
-                        print(f"      ✔️  Selección {i+1} confirmada")
-                        page.wait_for_timeout(800)
-                        _cerrar_alerta_general(page)
+                # Clickear button[btn-eligelo] directamente.
+                # No re-clickear los ya seleccionados (tienen clase btn_deshabilitado).
+                opciones = page.locator("button[btn-eligelo]:not(.btn_deshabilitado)")
+                seleccionados = 0
+                for j in range(opciones.count()):
+                    if seleccionados >= requeridos:
                         break
+                    opt = opciones.nth(j)
+                    if not opt.is_visible():
+                        continue
+                    opt.click()
+                    seleccionados += 1
+                    page.wait_for_timeout(1000)
+                    # Debug: mostrar clase actual del botón confirmar para diagnóstico
+                    try:
+                        clase_btn = page.locator("button#btn-aplicar-seleccion").first.get_attribute("class") or ""
+                        print(f"      ✔️  Opción {seleccionados}/{requeridos} seleccionada → btn class: '{clase_btn}'")
                     except Exception:
-                        _cerrar_alerta_general(page)
-                        if intento == 2:
-                            print(f"      ⚠️  No se pudo confirmar selección {i+1}")
-                        page.wait_for_timeout(400)
+                        print(f"      ✔️  Opción {seleccionados}/{requeridos} seleccionada")
+
+                # El botón se activa (.active) justo después de seleccionar, pero
+                # wait_for dispara los locator handlers que lo resetean.
+                # Usamos JS directo para hacer click sin activar handlers de Playwright.
+                clicked = page.evaluate("""
+                    () => {
+                        const btn = document.querySelector('button#btn-aplicar-seleccion.active');
+                        if (btn) { btn.click(); return true; }
+                        return false;
+                    }
+                """)
+                if clicked:
+                    print(f"      ✔️  Selección {i+1} confirmada")
+                    page.wait_for_timeout(1200)
+                    _cerrar_alerta_general(page)
+                else:
+                    clase_final = page.locator("button#btn-aplicar-seleccion").first.get_attribute("class") or "no encontrado"
+                    print(f"      ⚠️  Botón Aplicar no activo — clase: '{clase_final}'")
 
         # 3) Clic en botón principal de la PDP
-        # Primero intenta el selector estándar; si no aparece, prueba texto "Agregar"
-        btn_agregar = page.locator("a#btnAgregalo.btn_validar_alertas:not(.btn_deshabilitado_ficha)")
-        try:
-            btn_agregar.wait_for(state="visible", timeout=6000)
-        except Exception:
-            # Fallback: botón visible con texto "Agregar"
-            btn_agregar = page.locator(
-                "button:has-text('Agregar al pedido'), "
-                "a:has-text('Agregar al pedido'), "
-                "button:has-text('Agregar'), "
-                "a:has-text('Agregar')"
-            ).first
-            btn_agregar.wait_for(state="visible", timeout=6000)
-        btn_agregar.scroll_into_view_if_needed(timeout=3000)
-        texto_btn = btn_agregar.inner_text().strip()
-        print(f"   Botón PDP: '{texto_btn}'")
-        if "elegir" in texto_btn.lower():
-            print("   ⚠️  El botón aún dice 'Elegir' — puede que falte completar la oferta")
-        btn_agregar.click()
-        page.wait_for_timeout(3500)
-        _cerrar_alerta_general(page)
-        print("   ✅ Agregado desde PDP")
-        return True
+        #    JS scroll + click para evitar que add_locator_handler interfiera.
+        page.wait_for_timeout(1000)
+        resultado = page.evaluate("""
+            () => {
+                const btn = document.querySelector('a#btnAgregalo.btn_validar_alertas');
+                if (!btn) return {ok: false, error: 'no encontrado'};
+                btn.scrollIntoView({block: 'center'});
+                const texto = (btn.innerText || '').trim();
+                const deshabilitado = btn.classList.contains('btn_deshabilitado_ficha');
+                if (deshabilitado) return {ok: false, error: 'deshabilitado', texto: texto};
+                btn.click();
+                return {ok: true, texto: texto};
+            }
+        """)
+        if resultado.get("ok"):
+            print(f"   Botón PDP: '{resultado.get('texto', '')}'")
+            page.wait_for_timeout(3500)
+            _cerrar_alerta_general(page)
+            print("   ✅ Agregado desde PDP")
+            return True
+        else:
+            print(f"   ⚠️  Botón PDP: {resultado.get('error', 'desconocido')} — texto: '{resultado.get('texto', '')}'")
+            return False
 
     except Exception as e:
         debug_screenshot(page, "pdp_agregar")
@@ -668,56 +687,19 @@ def lo_mas_vendido_ir_a_pdp(page, start_si=1):
 # ══════════════════════════════════════════════════════════════════════
 # Pedido – Carrusel vertical "Ofertas recomendadas para ti" (venta_1)
 # ══════════════════════════════════════════════════════════════════════
-def ofertas_recomendadas_flujo(page) -> bool:
+def ofertas_ir_a_pdp(page) -> bool:
     """
-    Flujo completo para el carrusel vertical 'Ofertas recomendadas para ti':
-      1. Avanza slide a slide buscando un botón de agregar directo
-         (a.boton_Agregalo_home) → click.
-      2. Vuelve al slide 0 (slickGoTo 0).
-      3. Hace clic en el link de card del slide 0 para ir a PDP.
-         Se evita el botón de acción (.boton_Agregalo_home, .ctn-elige-opcion).
-    Retorna True si navegó a PDP, False si falló en algún paso.
+    Carrusel vertical 'Ofertas recomendadas': navega al slide 0 y hace
+    click en a[data-item-tag='verdetalle'] para entrar a la PDP.
+    Retorna True si navegó, False si falló.
     """
-    print("💡 Ofertas recomendadas → iniciando flujo...")
+    print("💡 Ofertas recomendadas → ir a PDP...")
     try:
         contenedor = page.locator("#divListadoEstrategia, .content_carrusel_ofertas").first
         contenedor.wait_for(state="visible", timeout=10000)
         contenedor.scroll_into_view_if_needed(timeout=2000)
 
-        next_btn = contenedor.locator("button.next-flecha-dorada, button.slick-next").first
-        si = 0
-        agregado = False
-
-        # ── 1) Scroll buscando "Agregar directo" ──────────────────────
-        for _ in range(20):
-            slide = contenedor.locator("div.ctn-estrategia.slick-current, div.slick-slide.slick-current").first
-            try:
-                slide.wait_for(state="attached", timeout=2000)
-            except Exception:
-                break
-
-            # Selector específico del carrusel Ofertas recomendadas
-            btn = slide.locator("a.boton_Agregalo_home.boton_Agregalo_home_pase_pedido").first
-            if btn.count() and btn.is_visible():
-                print(f"   ✅ Slide {si+1} → botón agregar directo → click")
-                btn.click()
-                page.wait_for_timeout(3000)
-                agregado = True
-                break
-
-            try:
-                if not next_btn.is_visible():
-                    break
-                next_btn.click()
-                page.wait_for_timeout(600)
-                si += 1
-            except Exception:
-                break
-
-        if not agregado:
-            print("   ⚠️  No se encontró botón 'Agregar' en Ofertas recomendadas")
-
-        # ── 2) Volver al slide 0 ──────────────────────────────
+        # Volver al slide 0
         page.evaluate("""
             () => {
                 const s = document.querySelector('#divListadoEstrategia')
@@ -727,49 +709,95 @@ def ofertas_recomendadas_flujo(page) -> bool:
         """)
         page.wait_for_timeout(700)
 
-        # ── 3) Click en link de navegación del slide 0 para ir a PDP ──
-        # Se busca un <a href> que NO sea el botón de acción del carrusel.
         slide0 = contenedor.locator("div.ctn-estrategia.slick-current, div.slick-slide.slick-current").first
         slide0.wait_for(state="attached", timeout=3000)
 
-        links = slide0.locator("a[href]")
-        for i in range(links.count()):
-            link = links.nth(i)
-            if not link.is_visible():
-                continue
-            classes = link.get_attribute("class") or ""
-            href = link.get_attribute("href") or ""
-            # Saltar botones de acción (agregar directo o elegir opción)
-            if "boton_Agregalo_home" in classes or "ctn-elige-opcion" in classes:
-                continue
-            if not href or href == "#":
-                continue
-            texto = link.inner_text().strip()
-            print(f"   ✅ PDP card link → '{texto[:40]}' → {href[:60]} → click")
-            link.click()
+        ver_detalle = slide0.locator("a[data-item-tag='verdetalle']").first
+        if ver_detalle.count() and ver_detalle.is_visible():
+            print("   ✅ Navegando a PDP via a[data-item-tag='verdetalle']")
+            ver_detalle.click()
             page.wait_for_timeout(3000)
             return True
 
-        # Fallback: click en la imagen del card → aparece botón "Ver detalle"
-        print("   ⚠️  Sin link directo → intentando click en imagen del card")
-        img = slide0.locator("img").first
-        if img.count() and img.is_visible():
-            img.click()
-            page.wait_for_timeout(800)
-            ver_detalle = page.locator(
-                "button:has-text('Ver detalle'), a:has-text('Ver detalle')"
-            ).first
-            try:
-                ver_detalle.wait_for(state="visible", timeout=3000)
-                ver_detalle.click()
-                page.wait_for_timeout(3000)
-                return True
-            except Exception:
-                pass
-        print("   ❌ No se pudo navegar a PDP en Ofertas recomendadas")
+        print("   ❌ No se encontró a[data-item-tag='verdetalle']")
     except Exception as e:
-        debug_screenshot(page, "ofertas_recomendadas")
-        print(f"   ❌ Error en ofertas_recomendadas_flujo: {e}")
+        debug_screenshot(page, "ofertas_ir_a_pdp")
+        print(f"   ❌ Error en ofertas_ir_a_pdp: {e}")
+    return False
+
+
+def ofertas_agregar_directo(page) -> bool:
+    """
+    Carrusel vertical 'Ofertas recomendadas': recorre slides buscando
+    a.boton_Agregalo_home con texto 'Agregar' y lo clickea directamente.
+    Importante: scoped a #divListadoEstrategia para no confundir con
+    el carrusel horizontal.
+    Retorna True si agregó, False si no encontró.
+    """
+    print("💡 Ofertas recomendadas → agregar directo...")
+    try:
+        # Buscar contenedor del carrusel vertical
+        contenedor = page.locator("#divListadoEstrategia").first
+        if not contenedor.count():
+            contenedor = page.locator(".content_carrusel_ofertas").first
+        if not contenedor.count():
+            print("   ❌ No se encontró contenedor del carrusel vertical")
+            debug_screenshot(page, "ofertas_no_contenedor")
+            return False
+
+        contenedor.wait_for(state="visible", timeout=10000)
+        contenedor.scroll_into_view_if_needed(timeout=2000)
+        page.wait_for_timeout(1000)
+
+        # Debug: contar botones "Agregar" visibles en todo el contenedor
+        todos_btns = contenedor.locator("a.boton_Agregalo_home.boton_Agregalo_home_pase_pedido")
+        total_btns = todos_btns.count()
+        print(f"   📊 Botones a.boton_Agregalo_home encontrados en contenedor: {total_btns}")
+
+        # Si hay algún botón visible directamente, usarlo (sin depender de slides)
+        for bi in range(total_btns):
+            btn = todos_btns.nth(bi)
+            if btn.is_visible():
+                texto = btn.inner_text().strip()
+                print(f"   📋 Botón {bi+1}/{total_btns} visible → texto: '{texto}'")
+                if "agregar" in texto.lower():
+                    btn.scroll_into_view_if_needed(timeout=2000)
+                    print(f"   ✅ Botón '{texto}' → click")
+                    btn.click()
+                    page.wait_for_timeout(3000)
+                    return True
+
+        # Si no hay visible, navegar slides con flechas
+        next_btn = contenedor.locator("button.next-flecha-dorada, button.slick-next").first
+        print(f"   🔄 Navegando slides (flecha visible: {next_btn.count() and next_btn.is_visible()})")
+
+        for si in range(20):
+            try:
+                if not next_btn.count() or not next_btn.is_visible():
+                    break
+                next_btn.click()
+                page.wait_for_timeout(800)
+            except Exception:
+                break
+
+            # Después de avanzar, buscar botón visible
+            for bi in range(todos_btns.count()):
+                btn = todos_btns.nth(bi)
+                if btn.is_visible():
+                    texto = btn.inner_text().strip()
+                    print(f"   📋 Slide {si+2} → botón texto: '{texto}'")
+                    if "agregar" in texto.lower():
+                        btn.scroll_into_view_if_needed(timeout=2000)
+                        print(f"   ✅ '{texto}' → click")
+                        btn.click()
+                        page.wait_for_timeout(3000)
+                        return True
+
+        print("   ⚠️  No se encontró botón 'Agregar' en Ofertas recomendadas")
+        debug_screenshot(page, "ofertas_sin_agregar")
+    except Exception as e:
+        debug_screenshot(page, "ofertas_agregar_directo")
+        print(f"   ❌ Error en ofertas_agregar_directo: {e}")
     return False
 
 
@@ -953,15 +981,21 @@ def flujo_4_pedido(page) -> None:
         print("⚠️  Lo más vendido: no se encontró producto con botón 'Agregar'")
 
     # ── Carrusel "Ofertas recomendadas para ti" (venta_1) ─────
+    # Orden: 1) ir a PDP via VER DETALLE → agregar → volver
+    #        2) agregar directo desde el carrusel (botón "Agregar")
     print("\n--- Ofertas recomendadas para ti (venta_1) ---")
-    navegado_or = ofertas_recomendadas_flujo(page)
-    if navegado_or:
+    if ofertas_ir_a_pdp(page):
         cerrar_popups(page)
         pdp_agregar(page)
         page.go_back()
         page.wait_for_load_state("domcontentloaded")
+        page.wait_for_timeout(2000)
+        cerrar_popups(page)
     else:
         print("⚠️  Ofertas recomendadas: no se pudo ir a PDP")
+
+    ofertas_agregar_directo(page)
+    cerrar_popups(page)
 
 
 # ── Registro de flujos disponibles ────────────────────────────────────
