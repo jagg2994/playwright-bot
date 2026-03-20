@@ -60,10 +60,19 @@ FLOW_GANA_CATEGORIAS_1 = "gana_categorias_1_flow"
 FLOW_GANA_CARRUSEL1    = "gana+_carrusele1_flow"
 FLOW_PEDIDO_CARRUSELES = "pedido_carruseles_flow"
 FLOW_BUSCADOR_CHECKOUT = "buscador_checkout_flow"
+FLOW_SEARCH_PLP        = "search_plp_flow"
+FLOW_MINI_BUSCADOR     = "mini_buscador_flow"
+FLOW_LIQUIDACION       = "liquidacion_plp_flow"
+FLOW_FESTIVALES_PLP    = "festivales_plp_flow"
+FLOW_FESTIVALES_CARRUSEL = "festivales_carrusel_flow"
 
 # ── Configuración por país ───────────────────────────────────────────
 # CUV para buscar en el buscador de checkout (cambiar según el país)
 CUV_CHECKOUT = os.getenv("BELCORP_CUV", "10989")
+# Término de búsqueda para el buscador del header (search PLP)
+SEARCH_TERM = os.getenv("BELCORP_SEARCH", "nitro")
+# Término de búsqueda para el mini buscador
+MINI_SEARCH_TERM = os.getenv("BELCORP_MINI_SEARCH", "vibranza")
 
 # ── Selectores de botones de cierre de popup (orden de prioridad) ──────
 SELECTORES_POPUP = [
@@ -321,21 +330,44 @@ def plp_ir_a_pdp(page, skip_index=None):
     """
     Recorre la PLP y hace clic en el primer a#btnAgregalo cuyo texto
     NO sea "Agregar" (p.ej. "Ver detalle"). Ese clic navega a la PDP.
+    Fallback: si todos dicen "Agregar", hace click en la imagen del producto
+    (skip el ya agregado) para ir a PDP.
     Retorna el índice clickeado o None.
     """
     print("🔗 PLP → buscando producto para ir a PDP...")
     try:
         page.wait_for_selector("#FichasProductosBuscador article", timeout=10000)
         productos = page.query_selector_all("#FichasProductosBuscador article")
+
+        # Empezar desde después del producto ya agregado
+        start = skip_index if skip_index else 0
         for idx, prod in enumerate(productos, 1):
-            if idx == skip_index:
+            if idx <= start:
                 continue
-            texto = _btn_texto(prod)
-            if texto and texto.lower() != "agregar":
-                print(f"   ✅ Producto {idx} → clic en '{texto}' → navegando a PDP")
-                prod.query_selector("a#btnAgregalo").click()
+            btn = prod.query_selector("a#btnAgregalo")
+            if not btn:
+                continue
+            texto_btn = (btn.inner_text() or "").strip()
+            if texto_btn.lower() != "agregar":
+                print(f"   ⏭️  Producto {idx}: '{texto_btn}' → skip")
+                continue
+            # Producto con "Agregar" → scroll + hover para revelar "Ver detalle"
+            art = page.locator("#FichasProductosBuscador article").nth(idx - 1)
+            img = art.locator("img").first
+            if img.count():
+                img.scroll_into_view_if_needed(timeout=3000)
+                page.wait_for_timeout(500)
+                img.hover()
+                page.wait_for_timeout(1000)
+            ver_detalle = art.locator("text=Ver detalle").first
+            if ver_detalle.count() and ver_detalle.is_visible():
+                print(f"   ✅ Producto {idx} → hover → 'Ver detalle' → PDP")
+                ver_detalle.click()
                 page.wait_for_timeout(3000)
                 return idx
+            else:
+                print(f"   ⏭️  Producto {idx}: hover no reveló 'Ver detalle' → skip")
+
         print("   ❌ No se encontró producto para ir a PDP")
     except Exception as e:
         debug_screenshot(page, "plp_ir_a_pdp")
@@ -827,6 +859,12 @@ def ejecutar_flujo_plp(page, flow_name: str, label: str, navegar_fn) -> None:
     idx = plp_agregar_directo(page)
     cerrar_popups(page)
 
+    # Refrescar para que el DOM refleje el producto ya agregado
+    page.reload()
+    page.wait_for_load_state("domcontentloaded")
+    page.wait_for_timeout(2000)
+    cerrar_popups(page)
+
     idx_pdp = plp_ir_a_pdp(page, skip_index=idx)
     if idx_pdp:
         cerrar_popups(page)
@@ -1110,6 +1148,244 @@ def flujo_5_buscador_checkout(page) -> None:
         print(f"   ❌ Error agregando producto directo: {e}")
 
 
+def flujo_6_search_plp(page) -> None:
+    """
+    Flujo 6 · Buscador (search PLP).
+    Busca un término en el buscador del header, click en "VER MÁS RESULTADOS"
+    para ir a la PLP de búsqueda, luego agregar directo + ir a PDP.
+    """
+    def navegar_search(p):
+        print(f"🔍 Buscando '{SEARCH_TERM}' desde el header...")
+        p.goto("https://www.somosbelcorp.com/")
+        p.wait_for_load_state("domcontentloaded")
+        p.wait_for_timeout(2000)
+        cerrar_popups(p)
+
+        # Escribir en el buscador del header
+        buscador = p.locator("input[placeholder='Buscar ofertas']")
+        buscador.wait_for(state="visible", timeout=10000)
+        buscador.click()
+        buscador.type(SEARCH_TERM, delay=150)
+        p.wait_for_timeout(3000)
+
+        # Click en "VER MÁS RESULTADOS"
+        ver_mas = p.locator("a.search-modal-more-results")
+        ver_mas.wait_for(state="visible", timeout=10000)
+        print(f"   ✅ Click en 'VER MÁS RESULTADOS' → PLP de búsqueda")
+        ver_mas.click()
+        p.wait_for_timeout(3000)
+
+    ejecutar_flujo_plp(page, FLOW_SEARCH_PLP, f"Buscador – '{SEARCH_TERM}' (search PLP)", navegar_search)
+
+
+def flujo_7_mini_buscador(page) -> None:
+    """
+    Flujo 7 · Mini buscador.
+    Busca un término en el buscador del header, agrega directo desde el modal
+    de resultados, luego entra a PDP de otro producto y agrega desde ahí.
+    """
+    print("\n" + "═"*50)
+    print(f"FLUJO 7: Mini buscador – '{MINI_SEARCH_TERM}'")
+    print("═"*50)
+    set_flow(FLOW_MINI_BUSCADOR)
+
+    # 1) Ir al home y buscar
+    print(f"🔍 Buscando '{MINI_SEARCH_TERM}' desde el header...")
+    page.goto("https://www.somosbelcorp.com/")
+    page.wait_for_load_state("domcontentloaded")
+    page.wait_for_timeout(2000)
+    cerrar_popups(page)
+
+    buscador = page.locator("input[placeholder='Buscar ofertas']")
+    buscador.wait_for(state="visible", timeout=10000)
+    buscador.click()
+    buscador.type(MINI_SEARCH_TERM, delay=150)
+    page.wait_for_timeout(3000)
+
+    # 2) Agregar directo desde el modal de resultados
+    print("🛒 Mini buscador → buscando producto con botón 'Agregar'...")
+    try:
+        cards = page.locator("div.product-searched-container")
+        cards.first.wait_for(state="visible", timeout=10000)
+        agregado_idx = None
+
+        for i in range(cards.count()):
+            card = cards.nth(i)
+            btn = card.locator("button.search-add-product")
+            if btn.count() and btn.is_visible():
+                texto = btn.inner_text().strip()
+                if texto.lower() == "agregar":
+                    print(f"   ✅ Producto {i+1} → '{texto}' → click")
+                    btn.click()
+                    page.wait_for_timeout(3000)
+                    cerrar_popups(page)
+                    print("   ✅ Agregado desde mini buscador")
+                    agregado_idx = i
+                    break
+
+        if agregado_idx is None:
+            print("   ⚠️  No se encontró producto con botón 'Agregar'")
+
+    except Exception as e:
+        debug_screenshot(page, "mini_buscador_agregar")
+        print(f"   ❌ Error agregando desde mini buscador: {e}")
+
+    # 3) Refrescar, volver a buscar y entrar a PDP de un producto no agregado
+    print("\n🔄 Refrescando para buscar producto e ir a PDP...")
+    page.goto("https://www.somosbelcorp.com/")
+    page.wait_for_load_state("domcontentloaded")
+    page.wait_for_timeout(2000)
+    cerrar_popups(page)
+
+    buscador2 = page.locator("input[placeholder='Buscar ofertas']")
+    buscador2.wait_for(state="visible", timeout=10000)
+    buscador2.click()
+    buscador2.type(MINI_SEARCH_TERM, delay=150)
+    page.wait_for_timeout(3000)
+
+    print("🔗 Mini buscador → buscando producto no agregado para ir a PDP...")
+    try:
+        cards = page.locator("div.product-searched-container")
+        cards.first.wait_for(state="visible", timeout=10000)
+
+        for i in range(cards.count()):
+            card = cards.nth(i)
+            btn = card.locator("button.search-add-product")
+            # Solo entrar a PDP si el producto tiene botón "Agregar" (no fue agregado)
+            if not (btn.count() and btn.is_visible()):
+                print(f"   ⏭️  Producto {i+1}: sin botón visible → skip")
+                continue
+            texto = btn.inner_text().strip()
+            if texto.lower() != "agregar":
+                print(f"   ⏭️  Producto {i+1}: '{texto}' (ya agregado) → skip")
+                continue
+            # Obtener el href del link "Ver detalle" y navegar
+            link_pdp = card.locator("a.image-button-detail-link")
+            if link_pdp.count():
+                href = link_pdp.get_attribute("href")
+                if href:
+                    print(f"   ✅ Producto {i+1} → navegando a PDP: {href}")
+                    page.goto(f"https://www.somosbelcorp.com{href}")
+                    page.wait_for_load_state("domcontentloaded")
+                    page.wait_for_timeout(2000)
+                    cerrar_popups(page)
+                    pdp_agregar(page)
+                    break
+        else:
+            print("   ⚠️  No se encontró producto disponible para ir a PDP")
+
+    except Exception as e:
+        debug_screenshot(page, "mini_buscador_pdp")
+        print(f"   ❌ Error navegando a PDP desde mini buscador: {e}")
+
+
+def flujo_8_liquidacion(page) -> None:
+    """
+    Flujo 8 · Liquidación PLP.
+    Navega a Liquidaciones desde el home, agrega directo + ir a PDP.
+    """
+    def navegar_liquidacion(p):
+        print("➡️  Ir a Liquidaciones...")
+        p.goto("https://www.somosbelcorp.com/")
+        p.wait_for_load_state("domcontentloaded")
+        p.wait_for_timeout(2000)
+        cerrar_popups(p)
+        link = p.locator('a[aria-label="Liquidaciones"]').first
+        link.wait_for(state="visible", timeout=10000)
+        link.scroll_into_view_if_needed(timeout=3000)
+        link.click()
+        p.wait_for_timeout(3000)
+        print("✅ En Liquidaciones")
+
+    ejecutar_flujo_plp(page, FLOW_LIQUIDACION, "Liquidación PLP", navegar_liquidacion)
+
+
+def flujo_9_festivales_plp(page) -> None:
+    """
+    Flujo 9 · Festivales PLP.
+    Navega a Festival desde el home, agrega directo + ir a PDP.
+    """
+    def navegar_festivales(p):
+        print("➡️  Ir a Festivales...")
+        p.goto("https://www.somosbelcorp.com/")
+        p.wait_for_load_state("domcontentloaded")
+        p.wait_for_timeout(2000)
+        cerrar_popups(p)
+        link = p.locator('a[aria-label="FESTIVAL TOTAL PEDIDO"]').first
+        link.wait_for(state="visible", timeout=10000)
+        link.scroll_into_view_if_needed(timeout=3000)
+        link.click()
+        p.wait_for_timeout(3000)
+        print("✅ En Festivales")
+
+    ejecutar_flujo_plp(page, FLOW_FESTIVALES_PLP, "Festivales PLP", navegar_festivales)
+
+
+def flujo_10_festivales_carrusel(page) -> None:
+    """
+    Flujo 10 · Carrusel de premios Festivales.
+    Navega a Festival, busca el carrusel de premios y agrega uno disponible.
+    """
+    print("\n" + "═"*50)
+    print("FLUJO 10: Festivales – Carrusel de premios")
+    print("═"*50)
+    set_flow(FLOW_FESTIVALES_CARRUSEL)
+
+    print("➡️  Ir a Festivales desde el home...")
+    page.goto("https://www.somosbelcorp.com/")
+    page.wait_for_load_state("domcontentloaded")
+    page.wait_for_timeout(2000)
+    cerrar_popups(page)
+    link = page.locator('a[aria-label="FESTIVAL TOTAL PEDIDO"]').first
+    link.wait_for(state="visible", timeout=10000)
+    link.scroll_into_view_if_needed(timeout=3000)
+    link.click()
+    page.wait_for_load_state("domcontentloaded")
+    page.wait_for_timeout(3000)
+    cerrar_popups(page)
+    print("✅ En Festivales")
+
+    # Buscar el carrusel de premios (está arriba de la PLP)
+    print("🎁 Buscando carrusel de premios...")
+    try:
+        contenedor = page.locator("div#contenedor-landing-premio-card")
+        contenedor.wait_for(state="attached", timeout=10000)
+        # Scroll al carrusel
+        page.evaluate("""
+            () => {
+                const el = document.querySelector('div#contenedor-landing-premio-card');
+                if (el) el.scrollIntoView({ block: 'center' });
+            }
+        """)
+        page.wait_for_timeout(1500)
+        print("   ✅ Carrusel de premios encontrado")
+
+        # Buscar card activa con botón "Agregar"
+        card = contenedor.locator("div.tarjeta.festival.slick-active div.btn-add-fest-promotion-all").first
+        card.wait_for(state="attached", timeout=8000)
+        page.wait_for_timeout(500)
+
+        # JS click para evitar problemas de visibilidad
+        clicked = page.evaluate("""
+            () => {
+                const btn = document.querySelector(
+                    '#contenedor-landing-premio-card .tarjeta.festival.slick-active .btn-add-fest-promotion-all'
+                );
+                if (btn) { btn.scrollIntoView({ block: 'center' }); btn.click(); return true; }
+                return false;
+            }
+        """)
+        if clicked:
+            page.wait_for_timeout(3000)
+            cerrar_popups(page)
+            print("   ✅ Premio agregado desde carrusel de festivales")
+        else:
+            print("   ⚠️  No se pudo hacer click en el botón de premio")
+    except Exception as e:
+        debug_screenshot(page, "festivales_carrusel")
+        print(f"   ❌ Error en carrusel de premios: {e}")
+
+
 # ── Registro de flujos disponibles ────────────────────────────────────
 FLUJOS = {
     "1": flujo_1_esika,
@@ -1117,6 +1393,11 @@ FLUJOS = {
     "3": flujo_3_carrusel_gana,
     "4": flujo_4_pedido,
     "5": flujo_5_buscador_checkout,
+    "6": flujo_6_search_plp,
+    "7": flujo_7_mini_buscador,
+    "8": flujo_8_liquidacion,
+    "9": flujo_9_festivales_plp,
+    "10": flujo_10_festivales_carrusel,
 }
 
 
@@ -1191,7 +1472,7 @@ if __name__ == "__main__":
         nargs="+",
         choices=FLUJOS.keys(),
         metavar="N",
-        help="Flujo(s) a ejecutar: 1, 2, 3, 4, 5 (por defecto: todos)"
+        help="Flujo(s) a ejecutar: 1-10 (por defecto: todos)"
     )
     parser.add_argument(
         "--mobile", "-m",
