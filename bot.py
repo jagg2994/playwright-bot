@@ -59,6 +59,11 @@ FLOW_ESIKA_PLP_PDP     = "esika_plp_pdp_flow"
 FLOW_GANA_CATEGORIAS_1 = "gana_categorias_1_flow"
 FLOW_GANA_CARRUSEL1    = "gana+_carrusele1_flow"
 FLOW_PEDIDO_CARRUSELES = "pedido_carruseles_flow"
+FLOW_BUSCADOR_CHECKOUT = "buscador_checkout_flow"
+
+# ── Configuración por país ───────────────────────────────────────────
+# CUV para buscar en el buscador de checkout (cambiar según el país)
+CUV_CHECKOUT = os.getenv("BELCORP_CUV", "10989")
 
 # ── Selectores de botones de cierre de popup (orden de prioridad) ──────
 SELECTORES_POPUP = [
@@ -998,12 +1003,120 @@ def flujo_4_pedido(page) -> None:
     cerrar_popups(page)
 
 
+def flujo_5_buscador_checkout(page) -> None:
+    """
+    Flujo 5 · Buscador de checkout.
+    Ingresa un CUV en el buscador, espera que cargue el producto,
+    y agrega una oferta similar con botón 'Agrégalo'.
+    """
+    print("\n" + "═"*50)
+    print(f"FLUJO 5: Buscador de checkout (CUV: {CUV_CHECKOUT})")
+    print("═"*50)
+    set_flow(FLOW_BUSCADOR_CHECKOUT)
+
+    ir_a_pedido(page)
+    cerrar_popups(page)
+
+    # 1) Ingresar CUV en el buscador (desktop)
+    print(f"🔍 Ingresando CUV: {CUV_CHECKOUT}...")
+    page.wait_for_timeout(2000)
+    buscador = page.locator("input.txtCuvConsultaDesktop")
+    buscador.wait_for(state="visible", timeout=10000)
+    buscador.scroll_into_view_if_needed(timeout=3000)
+    page.wait_for_timeout(1000)
+    buscador.click()
+    buscador.type(CUV_CHECKOUT, delay=150)
+    page.wait_for_timeout(4000)
+    print("   ✅ CUV ingresado, esperando resultado...")
+
+    # 3) Buscar en ofertas similares un producto no agregado y clickearlo via JS
+    print("🛍️  Buscando oferta similar no agregada...")
+    try:
+        cards = page.locator("li.producto_recomendado.slick-active")
+        cards.first.wait_for(state="attached", timeout=10000)
+        page.wait_for_timeout(1000)
+
+        resultado = page.evaluate("""
+            () => {
+                const cards = document.querySelectorAll('li.producto_recomendado.slick-active');
+                for (let i = 0; i < cards.length; i++) {
+                    const card = cards[i];
+                    const agregado = card.querySelector('div.agregado.product-add');
+                    if (agregado && agregado.offsetParent !== null) continue;
+                    const btn = card.querySelector('a.boton_Agregalo_home.btn_producto_recomendado_agregalo');
+                    if (btn) {
+                        btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return { index: i, found: true };
+                    }
+                }
+                return { found: false };
+            }
+        """)
+
+        if resultado["found"]:
+            idx = resultado["index"]
+            page.wait_for_timeout(1000)
+            # JS click para evitar interferencia de locator handlers
+            clicked = page.evaluate("""
+                (idx) => {
+                    const cards = document.querySelectorAll('li.producto_recomendado.slick-active');
+                    const btn = cards[idx].querySelector('a.boton_Agregalo_home.btn_producto_recomendado_agregalo');
+                    if (btn) { btn.click(); return true; }
+                    return false;
+                }
+            """, idx)
+            if clicked:
+                print(f"   ✅ Oferta {idx+1}: 'Agrégalo' → click")
+                page.wait_for_timeout(3000)
+                cerrar_popups(page)
+                print("   ✅ Oferta similar agregada desde buscador de checkout")
+            else:
+                print("   ⚠️  No se pudo hacer click en el botón")
+        else:
+            print("   ⚠️  No se encontró oferta similar disponible para agregar")
+    except Exception as e:
+        debug_screenshot(page, "buscador_checkout_ofertas")
+        print(f"   ❌ Error buscando oferta similar: {e}")
+
+    # 4) Refrescar, re-ingresar CUV y agregar con botón "Agregar" del buscador
+    print("\n🔄 Refrescando página para agregar producto directo...")
+    page.reload()
+    page.wait_for_load_state("domcontentloaded")
+    page.wait_for_timeout(2000)
+    cerrar_popups(page)
+
+    print(f"🔍 Re-ingresando CUV: {CUV_CHECKOUT}...")
+    buscador2 = page.locator("input.txtCuvConsultaDesktop")
+    buscador2.wait_for(state="visible", timeout=10000)
+    buscador2.scroll_into_view_if_needed(timeout=3000)
+    page.wait_for_timeout(1000)
+    buscador2.click()
+    buscador2.type(CUV_CHECKOUT, delay=150)
+    page.wait_for_timeout(4000)
+    print("   ✅ CUV ingresado, esperando producto...")
+
+    try:
+        btn_agregar = page.locator("input#btnAgregarDePedido")
+        btn_agregar.wait_for(state="visible", timeout=10000)
+        btn_agregar.scroll_into_view_if_needed(timeout=3000)
+        texto = btn_agregar.get_attribute("value") or "Agregar"
+        print(f"   ✅ Botón '{texto}' encontrado → click")
+        btn_agregar.click()
+        page.wait_for_timeout(3000)
+        cerrar_popups(page)
+        print("   ✅ Producto agregado directo desde buscador de checkout")
+    except Exception as e:
+        debug_screenshot(page, "buscador_checkout_agregar")
+        print(f"   ❌ Error agregando producto directo: {e}")
+
+
 # ── Registro de flujos disponibles ────────────────────────────────────
 FLUJOS = {
     "1": flujo_1_esika,
     "2": flujo_2_categorias,
     "3": flujo_3_carrusel_gana,
     "4": flujo_4_pedido,
+    "5": flujo_5_buscador_checkout,
 }
 
 
@@ -1078,7 +1191,7 @@ if __name__ == "__main__":
         nargs="+",
         choices=FLUJOS.keys(),
         metavar="N",
-        help="Flujo(s) a ejecutar: 1, 2, 3, 4 (por defecto: todos)"
+        help="Flujo(s) a ejecutar: 1, 2, 3, 4, 5 (por defecto: todos)"
     )
     parser.add_argument(
         "--mobile", "-m",
