@@ -21,6 +21,7 @@ import json
 import re
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright
+from tools.page_mapper import map_and_diagnose
 
 load_dotenv()
 
@@ -46,6 +47,18 @@ def debug_screenshot(page, nombre: str) -> str:
     except Exception:
         print(f"   ⚠️  No se pudo guardar screenshot: {path}")
     return path
+
+
+def debug_completo(page, nombre: str) -> dict:
+    """
+    Screenshot + Page Mapper. Usa esto en except blocks para diagnóstico completo.
+    """
+    debug_screenshot(page, nombre)
+    try:
+        return map_and_diagnose(page, context=nombre)
+    except Exception:
+        print("   ⚠️  Page mapper falló")
+        return {}
 
 
 def set_flow(name: str) -> None:
@@ -318,7 +331,7 @@ def plp_agregar_directo(page):
                 return idx
         print("   ❌ No se encontró producto con botón 'Agregar' en PLP")
     except Exception as e:
-        debug_screenshot(page, "plp_agregar_directo")
+        debug_completo(page, "plp_agregar_directo")
         print(f"   ❌ Error en plp_agregar_directo: {e}")
     return None
 
@@ -370,7 +383,7 @@ def plp_ir_a_pdp(page, skip_index=None):
 
         print("   ❌ No se encontró producto para ir a PDP")
     except Exception as e:
-        debug_screenshot(page, "plp_ir_a_pdp")
+        debug_completo(page, "plp_ir_a_pdp")
         print(f"   ❌ Error en plp_ir_a_pdp: {e}")
     return None
 
@@ -535,7 +548,7 @@ def pdp_agregar(page):
             return False
 
     except Exception as e:
-        debug_screenshot(page, "pdp_agregar")
+        debug_completo(page, "pdp_agregar")
         print(f"   ❌ Error en pdp_agregar: {e}")
         return False
 
@@ -758,7 +771,7 @@ def ofertas_ir_a_pdp(page) -> bool:
 
         print("   ❌ No se encontró a[data-item-tag='verdetalle']")
     except Exception as e:
-        debug_screenshot(page, "ofertas_ir_a_pdp")
+        debug_completo(page, "ofertas_ir_a_pdp")
         print(f"   ❌ Error en ofertas_ir_a_pdp: {e}")
     return False
 
@@ -1113,7 +1126,7 @@ def flujo_5_buscador_checkout(page) -> None:
         else:
             print("   ⚠️  No se encontró oferta similar disponible para agregar")
     except Exception as e:
-        debug_screenshot(page, "buscador_checkout_ofertas")
+        debug_completo(page, "buscador_checkout_ofertas")
         print(f"   ❌ Error buscando oferta similar: {e}")
 
     # 4) Refrescar, re-ingresar CUV y agregar con botón "Agregar" del buscador
@@ -1227,7 +1240,7 @@ def flujo_7_mini_buscador(page) -> None:
             print("   ⚠️  No se encontró producto con botón 'Agregar'")
 
     except Exception as e:
-        debug_screenshot(page, "mini_buscador_agregar")
+        debug_completo(page, "mini_buscador_agregar")
         print(f"   ❌ Error agregando desde mini buscador: {e}")
 
     # 3) Refrescar, volver a buscar y entrar a PDP de un producto no agregado
@@ -1275,7 +1288,7 @@ def flujo_7_mini_buscador(page) -> None:
             print("   ⚠️  No se encontró producto disponible para ir a PDP")
 
     except Exception as e:
-        debug_screenshot(page, "mini_buscador_pdp")
+        debug_completo(page, "mini_buscador_pdp")
         print(f"   ❌ Error navegando a PDP desde mini buscador: {e}")
 
 
@@ -1348,42 +1361,117 @@ def flujo_10_festivales_carrusel(page) -> None:
     # Buscar el carrusel de premios (está arriba de la PLP)
     print("🎁 Buscando carrusel de premios...")
     try:
-        contenedor = page.locator("div#contenedor-landing-premio-card")
-        contenedor.wait_for(state="attached", timeout=10000)
-        # Scroll al carrusel
+        # Scroll arriba y esperar render completo
+        page.evaluate("() => window.scrollTo(0, 0)")
+        page.wait_for_timeout(2000)
+
+        # Scroll al contenedor padre para forzar render
         page.evaluate("""
             () => {
-                const el = document.querySelector('div#contenedor-landing-premio-card');
+                const el = document.querySelector('.contenedor-landing-premio')
+                         || document.querySelector('#contenedor-landing-premio-card');
                 if (el) el.scrollIntoView({ block: 'center' });
             }
         """)
-        page.wait_for_timeout(1500)
-        print("   ✅ Carrusel de premios encontrado")
+        page.wait_for_timeout(3000)
 
-        # Buscar card activa con botón "Agregar"
-        card = contenedor.locator("div.tarjeta.festival.slick-active div.btn-add-fest-promotion-all").first
-        card.wait_for(state="attached", timeout=8000)
-        page.wait_for_timeout(500)
-
-        # JS click para evitar problemas de visibilidad
-        clicked = page.evaluate("""
+        # Debug: dump completo de clases dentro de las tarjetas
+        debug_clases = page.evaluate("""
             () => {
-                const btn = document.querySelector(
-                    '#contenedor-landing-premio-card .tarjeta.festival.slick-active .btn-add-fest-promotion-all'
-                );
-                if (btn) { btn.scrollIntoView({ block: 'center' }); btn.click(); return true; }
-                return false;
+                const tarjetas = document.querySelectorAll('.tarjeta.festival');
+                return Array.from(tarjetas).map((t, i) => {
+                    const divs = t.querySelectorAll('div');
+                    const clases = Array.from(divs).map(d => d.className).filter(c => c);
+                    return { tarjeta: i, total_divs: divs.length, clases: clases };
+                });
             }
         """)
-        if clicked:
+        for t in debug_clases:
+            print(f"   🔍 Tarjeta {t['tarjeta']}: {t['total_divs']} divs")
+            for c in t['clases']:
+                print(f"      class=\"{c}\"")
+
+        # Buscar botón con texto "Agregar" usando Playwright locator (no JS)
+        result = None
+        tarjetas = page.locator(".tarjeta.festival")
+        total = tarjetas.count()
+        print(f"   🔍 Tarjetas festival encontradas: {total}")
+
+        for i in range(total):
+            tarjeta = tarjetas.nth(i)
+            # Buscar span con texto "Agregar" dentro de la tarjeta
+            agregar_span = tarjeta.locator("span", has_text="Agregar")
+            if agregar_span.count() > 0 and agregar_span.first.is_visible():
+                # Click en el div padre del span
+                agregar_span.first.scroll_into_view_if_needed(timeout=3000)
+                agregar_span.first.click()
+                result = {"action": "clicked", "texto": "Agregar"}
+                print(f"   ✅ Click en 'Agregar' de tarjeta {i+1} via Playwright locator")
+                break
+
+            # Verificar si dice "Elegido"
+            elegido = tarjeta.locator("text=Elegido")
+            if elegido.count() > 0:
+                print(f"   ℹ️  Tarjeta {i+1} ya elegida")
+                continue
+
+        if not result:
+            result = {"action": "all_elegidos", "total": total}
+
+        if result.get("action") == "clicked":
             page.wait_for_timeout(3000)
             cerrar_popups(page)
-            print("   ✅ Premio agregado desde carrusel de festivales")
+            print(f"   ✅ Premio agregado desde carrusel de festivales ('{result['texto']}')")
         else:
-            print("   ⚠️  No se pudo hacer click en el botón de premio")
+            print(f"   ℹ️  Todos los premios ya fueron elegidos ({result.get('total')})")
     except Exception as e:
-        debug_screenshot(page, "festivales_carrusel")
+        debug_completo(page, "festivales_carrusel")
         print(f"   ❌ Error en carrusel de premios: {e}")
+
+    # ── Parte 2: ir a PDP de otro premio disponible y agregar desde ahí ──
+    print("\n🎁 Carrusel premios → ir a PDP de otro premio...")
+    try:
+        page.evaluate("() => window.scrollTo(0, 0)")
+        page.wait_for_timeout(1500)
+
+        tarjetas = page.locator(".tarjeta.festival")
+        total = tarjetas.count()
+        pdp_ok = False
+
+        for i in range(total):
+            tarjeta = tarjetas.nth(i)
+            # Solo ir a PDP si tiene botón "Agregar" (no "Elegido")
+            agregar_span = tarjeta.locator("span", has_text="Agregar")
+            elegido = tarjeta.locator("text=Elegido")
+
+            if elegido.count() > 0:
+                print(f"   ℹ️  Tarjeta {i+1} ya elegida — saltar")
+                continue
+
+            if agregar_span.count() > 0 and agregar_span.first.is_visible():
+                # Click en la zona redireccionarFicha para ir a PDP
+                redir = tarjeta.locator("div.redireccionarFicha").first
+                if redir.count():
+                    redir.scroll_into_view_if_needed(timeout=3000)
+                    redir.click()
+                    page.wait_for_timeout(3000)
+                    cerrar_popups(page)
+                    print(f"   ✅ Navegando a PDP de premio tarjeta {i+1}")
+                    pdp_ok = True
+                    break
+
+        if pdp_ok:
+            pdp_agregar(page)
+            page.go_back()
+            page.wait_for_load_state("domcontentloaded")
+            page.wait_for_timeout(2000)
+            cerrar_popups(page)
+            print("   ✅ Regresó de PDP del premio")
+        else:
+            print("   ℹ️  No hay premios disponibles para ir a PDP")
+    except Exception as e:
+        debug_completo(page, "festivales_carrusel_pdp")
+        print(f"   ❌ Error en PDP de premio: {e}")
 
 
 # ── Registro de flujos disponibles ────────────────────────────────────
