@@ -78,6 +78,7 @@ FLOW_MINI_BUSCADOR     = "mini_buscador_flow"
 FLOW_LIQUIDACION       = "liquidacion_plp_flow"
 FLOW_FESTIVALES_PLP    = "festivales_plp_flow"
 FLOW_FESTIVALES_CARRUSEL = "festivales_carrusel_flow"
+FLOW_CARRUSEL_HOME       = "carrusel_home_flow"
 
 # ── Configuración por país ───────────────────────────────────────────
 # CUV para buscar en el buscador de checkout (cambiar según el país)
@@ -1474,6 +1475,161 @@ def flujo_10_festivales_carrusel(page) -> None:
         print(f"   ❌ Error en PDP de premio: {e}")
 
 
+def flujo_11_carrusel_home(page) -> None:
+    """
+    Flujo 11 · Carrusel "Las mejores ofertas" del home.
+    Agrega un producto directo + ir a PDP de otro producto.
+    """
+    print("\n" + "═"*50)
+    print("FLUJO 11: Carrusel de home – Las mejores ofertas")
+    print("═"*50)
+    set_flow(FLOW_CARRUSEL_HOME)
+
+    print("➡️  Ir al home...")
+    page.goto("https://www.somosbelcorp.com/")
+    page.wait_for_load_state("domcontentloaded")
+    page.wait_for_timeout(3000)
+    cerrar_popups(page)
+
+    # Scroll al carrusel "Las mejores ofertas"
+    print("🛒 Buscando carrusel 'Las mejores ofertas'...")
+    try:
+        section = page.locator("section#offer-section")
+        section.wait_for(state="attached", timeout=10000)
+        section.scroll_into_view_if_needed(timeout=3000)
+        page.wait_for_timeout(2000)
+        print("   ✅ Carrusel encontrado")
+    except Exception as e:
+        debug_completo(page, "carrusel_home")
+        print(f"   ❌ No se encontró carrusel: {e}")
+        return
+
+    # ── Parte 1: agregar directo desde el carrusel ──
+    print("\n🛒 Carrusel home → agregar producto directo...")
+    agregado_idx = -1
+    try:
+        swiper = section.locator("div.swiper-wrapper").first
+        slides = swiper.locator("> div")
+        next_btn = section.locator("button[name='offer'].offer-swiper-button-next").first
+        total = slides.count()
+        print(f"   🔍 {total} slides encontrados")
+
+        for i in range(min(total, 20)):
+            slide = slides.nth(i)
+            # Verificar si tiene botón "Agregar" (no input-number que indica ya agregado)
+            btn_agregar = slide.locator("div.product-actions button span.pack-new-normal-text", has_text="Agregar")
+            ya_agregado = slide.locator("div.product-actions div.input-number")
+
+            if ya_agregado.count() > 0:
+                continue
+
+            if btn_agregar.count() > 0:
+                try:
+                    btn_parent = slide.locator("div.product-actions button.solid.secondary").first
+                    btn_parent.scroll_into_view_if_needed(timeout=3000)
+                    btn_parent.click()
+                    page.wait_for_timeout(2000)
+                    cerrar_popups(page)
+                    agregado_idx = i
+                    print(f"   ✅ Producto slide {i+1} → 'Agregar' → click")
+                    break
+                except Exception:
+                    pass
+
+            # Navegar al siguiente slide si no encontramos
+            try:
+                if next_btn.is_visible():
+                    next_btn.click()
+                    page.wait_for_timeout(600)
+            except Exception:
+                break
+
+        if agregado_idx < 0:
+            print("   ⚠️  No se encontró producto disponible para agregar")
+    except Exception as e:
+        debug_completo(page, "carrusel_home_agregar")
+        print(f"   ❌ Error agregando desde carrusel home: {e}")
+
+    # ── Parte 2: ir a PDP de otro producto ──
+    print("\n🔗 Carrusel home → ir a PDP de otro producto...")
+    try:
+        # Refrescar para actualizar estado
+        page.reload()
+        page.wait_for_load_state("domcontentloaded")
+        page.wait_for_timeout(3000)
+        cerrar_popups(page)
+
+        section = page.locator("section#offer-section")
+        section.scroll_into_view_if_needed(timeout=3000)
+        page.wait_for_timeout(2000)
+
+        swiper = section.locator("div.swiper-wrapper").first
+        slides = swiper.locator("> div")
+        next_btn = section.locator("button[name='offer'].offer-swiper-button-next").first
+        total = slides.count()
+        pdp_ok = False
+
+        for i in range(min(total, 20)):
+            slide = slides.nth(i)
+            # Solo ir a PDP si tiene botón "Agregar" (no agregado)
+            btn_agregar = slide.locator("div.product-actions button span.pack-new-normal-text", has_text="Agregar")
+            ya_agregado = slide.locator("div.product-actions div.input-number")
+
+            if ya_agregado.count() > 0:
+                continue
+            if i == agregado_idx:
+                continue
+
+            if btn_agregar.count() > 0:
+                # Hover sobre la imagen para mostrar "Ver detalle"
+                img_container = slide.locator("div.product-image").first
+                if img_container.count():
+                    img_container.scroll_into_view_if_needed(timeout=3000)
+                    img_container.hover()
+                    page.wait_for_timeout(800)
+
+                    ver_detalle = slide.locator("a.fade-button-link").first
+                    if ver_detalle.count() and ver_detalle.is_visible():
+                        ver_detalle.click()
+                        page.wait_for_timeout(3000)
+                        cerrar_popups(page)
+                        print(f"   ✅ Slide {i+1} → hover → 'Ver detalle' → PDP")
+                        pdp_ok = True
+                        break
+
+                    # Fallback: navegar via href directo
+                    href = slide.locator("a.fade-button-link").first.get_attribute("href")
+                    if href:
+                        page.goto(href)
+                        page.wait_for_load_state("domcontentloaded")
+                        page.wait_for_timeout(3000)
+                        cerrar_popups(page)
+                        print(f"   ✅ Slide {i+1} → navegación directa a PDP")
+                        pdp_ok = True
+                        break
+
+            # Siguiente slide
+            try:
+                if next_btn.is_visible():
+                    next_btn.click()
+                    page.wait_for_timeout(600)
+            except Exception:
+                break
+
+        if pdp_ok:
+            pdp_agregar(page)
+            page.go_back()
+            page.wait_for_load_state("domcontentloaded")
+            page.wait_for_timeout(2000)
+            cerrar_popups(page)
+            print("   ✅ Regresó de PDP del carrusel home")
+        else:
+            print("   ⚠️  No se encontró producto para ir a PDP")
+    except Exception as e:
+        debug_completo(page, "carrusel_home_pdp")
+        print(f"   ❌ Error en PDP carrusel home: {e}")
+
+
 # ── Registro de flujos disponibles ────────────────────────────────────
 FLUJOS = {
     "1": flujo_1_esika,
@@ -1486,6 +1642,7 @@ FLUJOS = {
     "8": flujo_8_liquidacion,
     "9": flujo_9_festivales_plp,
     "10": flujo_10_festivales_carrusel,
+    "11": flujo_11_carrusel_home,
 }
 
 

@@ -14,7 +14,7 @@
 | 8 | Liquidación PLP | ✅ Completo | `flujo_8_liquidacion` — navega desde home, PLP estándar con hover→"Ver detalle" |
 | 9 | Festivales PLP | ✅ Completo | `flujo_9_festivales_plp` — navega desde home, PLP estándar |
 | 10 | Festivales carrusel premios | ✅ Completo | `flujo_10_festivales_carrusel` — agregar premio + ir a PDP de otro premio via `div.redireccionarFicha` |
-| 11 | Carrusel de home | ⬚ Pendiente | |
+| 11 | Carrusel de home | ✅ Completo | `flujo_11_carrusel_home` — swiper "Las mejores ofertas", agregar directo + hover→"Ver detalle"→PDP |
 
 ## Flujos de compra — Mobile (390x844)
 
