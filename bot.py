@@ -219,7 +219,14 @@ def login(page) -> None:
     page.fill("#txtUsuario", os.getenv("BELCORP_USER"))
     page.fill("#txtContrasenia", os.getenv("BELCORP_PASS"))
     page.click("#btnLogin")
-    page.wait_for_selector('li.menu-item >> text="Gana+"', timeout=15000)
+    # En desktop "Gana+" es visible en el menú; en mobile está oculto.
+    # Esperar un indicador que funcione en ambos modos.
+    try:
+        page.wait_for_selector('li.menu-item >> text="Gana+"', timeout=8000)
+    except Exception:
+        # Mobile fallback: esperar que cargue la home (logo, carrito, etc.)
+        page.wait_for_load_state("domcontentloaded")
+        page.wait_for_timeout(3000)
     print("✅ Login OK")
 
 
@@ -260,6 +267,22 @@ def registrar_handler_popups(page) -> None:
     print("   🔔 Handlers de popup registrados")
 
 
+def abrir_buscador_header(page):
+    """Abre y retorna el input de búsqueda del header (desktop y mobile)."""
+    buscador = page.locator("input[placeholder='Buscar ofertas']")
+    try:
+        buscador.wait_for(state="visible", timeout=5000)
+    except Exception:
+        # Mobile: puede requerir click en ícono de búsqueda para mostrar el campo
+        icono = page.locator("a.search-icon, button.search-icon, [class*='search-icon'], [aria-label*='Buscar']").first
+        if icono.count() and icono.is_visible():
+            icono.click()
+            page.wait_for_timeout(1500)
+        buscador = page.locator("input[placeholder='Buscar ofertas']")
+        buscador.wait_for(state="visible", timeout=10000)
+    return buscador
+
+
 def ir_a_pedido(page) -> None:
     """Navega directamente a la sección de Pedido (checkout) y espera los carruseles."""
     print("➡️  Ir a Pedido...")
@@ -277,12 +300,37 @@ def ir_a_gana(page) -> None:
     # Si el menú está oculto (mobile), abrirlo primero
     menu_item = page.locator('li.menu-item >> text="Gana+"')
     if not menu_item.is_visible():
-        hamburger = page.locator("button.menu-hamburguesa, button[aria-label*='menú' i], .navbar-toggler, #btnMenuMobile").first
+        # Intentar varias formas de abrir el menú mobile
+        hamburger = page.locator("button.menu-toggle, button.menu-hamburguesa, button[aria-label*='menú' i], .navbar-toggler, #btnMenuMobile").first
         if hamburger.count() and hamburger.is_visible():
             hamburger.click()
-            page.wait_for_timeout(600)
-    page.wait_for_selector('li.menu-item >> text="Gana+"', timeout=10000)
-    page.click('li.menu-item >> text="Gana+"')
+            page.wait_for_timeout(1500)
+        else:
+            # Fallback: usar page mapper para diagnosticar
+            debug_screenshot(page, "ir_a_gana_no_hamburger")
+    try:
+        page.wait_for_selector('li.menu-item >> text="Gana+"', timeout=10000)
+        page.click('li.menu-item >> text="Gana+"')
+    except Exception:
+        # Mobile: el drawer-mask puede interceptar clicks. Usar JS directo.
+        clicked = page.evaluate("""
+            () => {
+                const links = document.querySelectorAll('a');
+                for (const a of links) {
+                    if (a.textContent.trim().includes('Gana+') && a.offsetParent !== null) {
+                        a.click();
+                        return a.href;
+                    }
+                }
+                return false;
+            }
+        """)
+        if clicked:
+            print(f"   ✅ Navegando a Gana+ via JS: {clicked}")
+        else:
+            # Fallback: navegar directamente a la URL de Gana+
+            page.goto("https://www.somosbelcorp.com/Mobile/Ofertas")
+            print("   ✅ Navegando a Gana+ via URL directa")
     page.wait_for_timeout(3000)
     print("✅ En Gana+")
 
@@ -365,7 +413,7 @@ def plp_ir_a_pdp(page, skip_index=None):
             if texto_btn.lower() != "agregar":
                 print(f"   ⏭️  Producto {idx}: '{texto_btn}' → skip")
                 continue
-            # Producto con "Agregar" → scroll + hover para revelar "Ver detalle"
+            # Producto con "Agregar" → intentar hover, luego fallback click en imagen
             art = page.locator("#FichasProductosBuscador article").nth(idx - 1)
             img = art.locator("img").first
             if img.count():
@@ -379,8 +427,22 @@ def plp_ir_a_pdp(page, skip_index=None):
                 ver_detalle.click()
                 page.wait_for_timeout(3000)
                 return idx
-            else:
-                print(f"   ⏭️  Producto {idx}: hover no reveló 'Ver detalle' → skip")
+            # Fallback mobile: click directo en la imagen para ir a PDP
+            link_img = art.locator("a.link_imagen, a:has(img)").first
+            if link_img.count():
+                href = link_img.get_attribute("href") or ""
+                if href and not href.startswith("javascript"):
+                    print(f"   ✅ Producto {idx} → click imagen → PDP ({href[:50]})")
+                    link_img.click()
+                    page.wait_for_timeout(3000)
+                    return idx
+            # Fallback: click en la imagen directamente
+            if img.count():
+                print(f"   ✅ Producto {idx} → click directo en img → PDP")
+                img.click()
+                page.wait_for_timeout(3000)
+                return idx
+            print(f"   ⏭️  Producto {idx}: no se pudo navegar a PDP → skip")
 
         print("   ❌ No se encontró producto para ir a PDP")
     except Exception as e:
@@ -1069,11 +1131,25 @@ def flujo_5_buscador_checkout(page) -> None:
     ir_a_pedido(page)
     cerrar_popups(page)
 
-    # 1) Ingresar CUV en el buscador (desktop)
+    # 1) Ingresar CUV en el buscador (desktop o mobile)
     print(f"🔍 Ingresando CUV: {CUV_CHECKOUT}...")
     page.wait_for_timeout(2000)
+    # Cerrar loading overlay si existe
+    page.evaluate("""
+        () => {
+            document.querySelectorAll('.ui-widget-overlay, .loadingScreenWindow').forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+    """)
+    page.wait_for_timeout(1000)
     buscador = page.locator("input.txtCuvConsultaDesktop")
-    buscador.wait_for(state="visible", timeout=10000)
+    try:
+        buscador.wait_for(state="visible", timeout=5000)
+    except Exception:
+        # Mobile: usar input mobile
+        buscador = page.locator("input.txtCuvConsultaMobile")
+        buscador.wait_for(state="visible", timeout=10000)
     buscador.scroll_into_view_if_needed(timeout=3000)
     page.wait_for_timeout(1000)
     buscador.click()
@@ -1139,7 +1215,11 @@ def flujo_5_buscador_checkout(page) -> None:
 
     print(f"🔍 Re-ingresando CUV: {CUV_CHECKOUT}...")
     buscador2 = page.locator("input.txtCuvConsultaDesktop")
-    buscador2.wait_for(state="visible", timeout=10000)
+    try:
+        buscador2.wait_for(state="visible", timeout=5000)
+    except Exception:
+        buscador2 = page.locator("input.txtCuvConsultaMobile")
+        buscador2.wait_for(state="visible", timeout=10000)
     buscador2.scroll_into_view_if_needed(timeout=3000)
     page.wait_for_timeout(1000)
     buscador2.click()
@@ -1149,11 +1229,32 @@ def flujo_5_buscador_checkout(page) -> None:
 
     try:
         btn_agregar = page.locator("input#btnAgregarDePedido")
-        btn_agregar.wait_for(state="visible", timeout=10000)
-        btn_agregar.scroll_into_view_if_needed(timeout=3000)
-        texto = btn_agregar.get_attribute("value") or "Agregar"
-        print(f"   ✅ Botón '{texto}' encontrado → click")
-        btn_agregar.click()
+        try:
+            btn_agregar.wait_for(state="visible", timeout=10000)
+            btn_agregar.scroll_into_view_if_needed(timeout=3000)
+            texto = btn_agregar.get_attribute("value") or "Agregar"
+            print(f"   ✅ Botón '{texto}' encontrado → click")
+            btn_agregar.click()
+        except Exception:
+            # Mobile: botón puede estar oculto — JS click directo
+            print("   ⚠️ Botón no visible, intentando JS click...")
+            resultado = page.evaluate("""
+                () => {
+                    const btn = document.querySelector('input#btnAgregarDePedido');
+                    if (!btn) {
+                        // Buscar alternativa mobile
+                        const alt = document.querySelector('a.btn_producto_recomendado_agregalo, button[class*="agregar"], input[type="button"][value*="Agregar"]');
+                        if (alt) { alt.click(); return {ok: true, alt: true}; }
+                        return {ok: false};
+                    }
+                    btn.click();
+                    return {ok: true, alt: false};
+                }
+            """)
+            if resultado.get("ok"):
+                print(f"   ✅ Producto agregado via JS click {'(alternativo)' if resultado.get('alt') else ''}")
+            else:
+                raise Exception("No se encontró botón agregar ni alternativa")
         page.wait_for_timeout(3000)
         cerrar_popups(page)
         print("   ✅ Producto agregado directo desde buscador de checkout")
@@ -1176,17 +1277,25 @@ def flujo_6_search_plp(page) -> None:
         cerrar_popups(p)
 
         # Escribir en el buscador del header
-        buscador = p.locator("input[placeholder='Buscar ofertas']")
-        buscador.wait_for(state="visible", timeout=10000)
+        buscador = abrir_buscador_header(p)
         buscador.click()
         buscador.type(SEARCH_TERM, delay=150)
         p.wait_for_timeout(3000)
 
         # Click en "VER MÁS RESULTADOS"
         ver_mas = p.locator("a.search-modal-more-results")
-        ver_mas.wait_for(state="visible", timeout=10000)
-        print(f"   ✅ Click en 'VER MÁS RESULTADOS' → PLP de búsqueda")
-        ver_mas.click()
+        try:
+            ver_mas.wait_for(state="visible", timeout=10000)
+            print(f"   ✅ Click en 'VER MÁS RESULTADOS' → PLP de búsqueda")
+            ver_mas.click()
+        except Exception:
+            # Mobile fallback: buscar cualquier link de "ver más" o presionar Enter
+            ver_mas_alt = p.locator("text=VER MÁS RESULTADOS, text=Ver más resultados, a:has-text('resultado')").first
+            if ver_mas_alt.count() and ver_mas_alt.is_visible():
+                ver_mas_alt.click()
+            else:
+                print("   ⚠️ 'VER MÁS RESULTADOS' no visible, presionando Enter...")
+                buscador.press("Enter")
         p.wait_for_timeout(3000)
 
     ejecutar_flujo_plp(page, FLOW_SEARCH_PLP, f"Buscador – '{SEARCH_TERM}' (search PLP)", navegar_search)
@@ -1210,17 +1319,17 @@ def flujo_7_mini_buscador(page) -> None:
     page.wait_for_timeout(2000)
     cerrar_popups(page)
 
-    buscador = page.locator("input[placeholder='Buscar ofertas']")
-    buscador.wait_for(state="visible", timeout=10000)
+    buscador = abrir_buscador_header(page)
     buscador.click()
     buscador.type(MINI_SEARCH_TERM, delay=150)
     page.wait_for_timeout(3000)
 
     # 2) Agregar directo desde el modal de resultados
     print("🛒 Mini buscador → buscando producto con botón 'Agregar'...")
+    modal_mode = True
     try:
         cards = page.locator("div.product-searched-container")
-        cards.first.wait_for(state="visible", timeout=10000)
+        cards.first.wait_for(state="visible", timeout=5000)
         agregado_idx = None
 
         for i in range(cards.count()):
@@ -1240,9 +1349,24 @@ def flujo_7_mini_buscador(page) -> None:
         if agregado_idx is None:
             print("   ⚠️  No se encontró producto con botón 'Agregar'")
 
-    except Exception as e:
-        debug_completo(page, "mini_buscador_agregar")
-        print(f"   ❌ Error agregando desde mini buscador: {e}")
+    except Exception:
+        # Mobile: mini buscador redirige a /buscador (página completa) en vez de modal
+        modal_mode = False
+        print("   ℹ️  Modal no disponible (mobile) — usando página de búsqueda")
+        try:
+            # Mobile /buscador usa a#btnAgregalo o div.seccion_agregar directamente
+            btn = page.locator("a#btnAgregalo, div.seccion_agregar")
+            btn.first.wait_for(state="visible", timeout=10000)
+            texto_btn = btn.first.inner_text().strip()
+            if texto_btn.lower() == "agregar":
+                btn.first.scroll_into_view_if_needed(timeout=3000)
+                btn.first.click()
+                page.wait_for_timeout(3000)
+                cerrar_popups(page)
+                print(f"   ✅ Producto agregado → '{texto_btn}' (página búsqueda mobile)")
+        except Exception as e2:
+            debug_completo(page, "mini_buscador_agregar")
+            print(f"   ❌ Error agregando desde mini buscador: {e2}")
 
     # 3) Refrescar, volver a buscar y entrar a PDP de un producto no agregado
     print("\n🔄 Refrescando para buscar producto e ir a PDP...")
@@ -1251,42 +1375,71 @@ def flujo_7_mini_buscador(page) -> None:
     page.wait_for_timeout(2000)
     cerrar_popups(page)
 
-    buscador2 = page.locator("input[placeholder='Buscar ofertas']")
-    buscador2.wait_for(state="visible", timeout=10000)
+    buscador2 = abrir_buscador_header(page)
     buscador2.click()
     buscador2.type(MINI_SEARCH_TERM, delay=150)
     page.wait_for_timeout(3000)
 
     print("🔗 Mini buscador → buscando producto no agregado para ir a PDP...")
     try:
-        cards = page.locator("div.product-searched-container")
-        cards.first.wait_for(state="visible", timeout=10000)
+        if modal_mode:
+            # Desktop: usar modal con product-searched-container
+            cards = page.locator("div.product-searched-container")
+            cards.first.wait_for(state="visible", timeout=10000)
 
-        for i in range(cards.count()):
-            card = cards.nth(i)
-            btn = card.locator("button.search-add-product")
-            # Solo entrar a PDP si el producto tiene botón "Agregar" (no fue agregado)
-            if not (btn.count() and btn.is_visible()):
-                print(f"   ⏭️  Producto {i+1}: sin botón visible → skip")
-                continue
-            texto = btn.inner_text().strip()
-            if texto.lower() != "agregar":
-                print(f"   ⏭️  Producto {i+1}: '{texto}' (ya agregado) → skip")
-                continue
-            # Obtener el href del link "Ver detalle" y navegar
-            link_pdp = card.locator("a.image-button-detail-link")
-            if link_pdp.count():
-                href = link_pdp.get_attribute("href")
-                if href:
-                    print(f"   ✅ Producto {i+1} → navegando a PDP: {href}")
-                    page.goto(f"https://www.somosbelcorp.com{href}")
+            for i in range(cards.count()):
+                card = cards.nth(i)
+                btn = card.locator("button.search-add-product")
+                if not (btn.count() and btn.is_visible()):
+                    continue
+                texto = btn.inner_text().strip()
+                if texto.lower() != "agregar":
+                    continue
+                link_pdp = card.locator("a.image-button-detail-link")
+                if link_pdp.count():
+                    href = link_pdp.get_attribute("href")
+                    if href:
+                        print(f"   ✅ Producto {i+1} → navegando a PDP: {href}")
+                        page.goto(f"https://www.somosbelcorp.com{href}")
+                        page.wait_for_load_state("domcontentloaded")
+                        page.wait_for_timeout(2000)
+                        cerrar_popups(page)
+                        pdp_agregar(page)
+                        break
+            else:
+                print("   ⚠️  No se encontró producto disponible para ir a PDP")
+        else:
+            # Mobile: redirige a /buscador — click "VER MÁS RESULTADOS" para ir a PLP estándar
+            ver_mas = page.locator("a#BotonVerTodosResultados")
+            try:
+                ver_mas.wait_for(state="visible", timeout=5000)
+                ver_mas.click()
+                page.wait_for_timeout(3000)
+                print("   ✅ Click 'VER MÁS RESULTADOS' → PLP")
+            except Exception:
+                pass
+            # Intentar usar PLP estándar
+            try:
+                page.wait_for_selector("#FichasProductosBuscador article", timeout=10000)
+                pdp_idx = plp_ir_a_pdp(page)
+                if pdp_idx:
+                    pdp_agregar(page)
+                else:
+                    print("   ⚠️  No se encontró producto para ir a PDP")
+            except Exception:
+                # Fallback: buscar link a ficha directamente
+                link = page.locator("a[href*='/ficha/']").first
+                if link.count():
+                    href = link.get_attribute("href")
+                    full_url = href if href.startswith("http") else f"https://www.somosbelcorp.com{href}"
+                    page.goto(full_url)
                     page.wait_for_load_state("domcontentloaded")
                     page.wait_for_timeout(2000)
                     cerrar_popups(page)
+                    print(f"   ✅ Navegando a PDP via link directo")
                     pdp_agregar(page)
-                    break
-        else:
-            print("   ⚠️  No se encontró producto disponible para ir a PDP")
+                else:
+                    print("   ⚠️  No se encontró producto para ir a PDP")
 
     except Exception as e:
         debug_completo(page, "mini_buscador_pdp")
@@ -1597,14 +1750,27 @@ def flujo_11_carrusel_home(page) -> None:
                         pdp_ok = True
                         break
 
-                    # Fallback: navegar via href directo
-                    href = slide.locator("a.fade-button-link").first.get_attribute("href")
-                    if href:
-                        page.goto(href)
-                        page.wait_for_load_state("domcontentloaded")
+                    # Fallback: navegar via href directo (mobile no tiene hover)
+                    link = slide.locator("a.fade-button-link, a[href*='/ficha/']").first
+                    if link.count():
+                        href = link.get_attribute("href")
+                        if href:
+                            full_url = href if href.startswith("http") else f"https://www.somosbelcorp.com{href}"
+                            page.goto(full_url)
+                            page.wait_for_load_state("domcontentloaded")
+                            page.wait_for_timeout(3000)
+                            cerrar_popups(page)
+                            print(f"   ✅ Slide {i+1} → navegación directa a PDP")
+                            pdp_ok = True
+                            break
+
+                    # Fallback 2: click en imagen directamente (puede llevar a PDP)
+                    img_link = slide.locator("a:has(img)").first
+                    if img_link.count():
+                        img_link.click()
                         page.wait_for_timeout(3000)
                         cerrar_popups(page)
-                        print(f"   ✅ Slide {i+1} → navegación directa a PDP")
+                        print(f"   ✅ Slide {i+1} → click imagen → PDP")
                         pdp_ok = True
                         break
 
@@ -1703,7 +1869,27 @@ def run(flujos_a_ejecutar: list, mobile: bool = False) -> None:
         login(page)
 
         for key in flujos_a_ejecutar:
-            FLUJOS[key](page)
+            try:
+                FLUJOS[key](page)
+            except Exception as e:
+                err_name = type(e).__name__
+                print(f"\n   ❌ FLUJO {key} FALLÓ ({err_name}): {e}")
+                # Si el browser/page murió, recrear
+                if "TargetClosed" in err_name or "closed" in str(e).lower():
+                    print("   🔄 Recreando página...")
+                    try:
+                        page.close()
+                    except Exception:
+                        pass
+                    if mobile:
+                        device = p.devices["iPhone 13"]
+                        context = browser.new_context(**device)
+                    else:
+                        context = browser.new_context()
+                    page = context.new_page()
+                    page.on("request", handle_request)
+                    registrar_handler_popups(page)
+                    login(page)
 
         output_file = "eventos_analytics_mobile.json" if mobile else "eventos_analytics.json"
         guardar_eventos(acumulado, output_file)
