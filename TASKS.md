@@ -46,9 +46,13 @@
 
 | # | Tarea | Prioridad | Descripción |
 |---|-------|-----------|-------------|
-| P1 | `config.json` — URL base + inputs configurables | Alta | Sacar URL hardcoded (`somosbelcorp.com` x14), CUVs, términos de búsqueda y credenciales a un archivo `config.json` fácil de editar. Actualmente usa env vars (`BELCORP_CUV`, `BELCORP_SEARCH`, `BELCORP_MINI_SEARCH`) |
-| P2 | Estabilizar M3 mobile | Alta | Browser crash (TargetClosedError) al navegar a Gana+ por tercera vez consecutiva — revisar navegación agresiva en `ir_a_gana` |
-| P3 | Skip productos ya agregados (unificar) | Alta | Existe lógica parcial (`caja_producto_agregado`, `div.agregado`, `btn_elegido`, `input-number`) pero no es consistente en todos los flujos. Unificar en helper reutilizable |
+| P1 | `config.json` — URL base + inputs configurables | ✅ Hecho | URL, CUVs, search terms, país, device mobile — todo en `config.json` |
+| P2 | Estabilizar M3 mobile | ✅ Hecho | `ir_a_gana` usa `page.goto(href)` en vez de `a.click()` |
+| P3 | Skip productos ya agregados (unificar) | ✅ Hecho | Helper `producto_ya_agregado()` unifica 5 patrones (PLP, locator, carrusel, festival) |
+| P3b | Selectores ambiguos (multi-entorno) | ✅ Hecho | `ir_a_gana` via JS href, `abrir_buscador_header` con fallback de placeholders, `.first` en locators |
+| P3c | Re-login automático | ✅ Hecho | `verificar_sesion()` detecta redirección a login y re-loguea antes de cada flujo |
+| P3d | Detección automática tipo de producto en PDP | ✅ Hecho | `_detectar_tipo_pdp()` clasifica: simple, seleccion_multi, ya_agregado, desconocido — `pdp_agregar` actúa según tipo |
+| P3e | Login con selector de país | ✅ Hecho | `BELCORP_COUNTRY` en `.env`, selecciona `#ddlPais` antes del login |
 | P4 | Interceptar datos backend | Media | Capturar requests/responses POST a APIs de pedido/carrito (`page.on("response")`) para tener evidencia de lo que se envía al servidor |
 | P5 | Mejorar output analytics por flujo | Media | Ya tiene campo `flow` + sufijo `_mobile`, pero mejorar formato: separar por flujo en archivos individuales, agregar resumen con conteo por evento |
 | P6 | Pre-mapeo de productos disponibles | Media | Escanear catálogo antes de ejecutar flujos para saber qué productos están disponibles y evitar bloqueos por falta de stock o productos ya agregados |

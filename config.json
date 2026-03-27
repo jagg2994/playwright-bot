@@ -1,11 +1,12 @@
 {
-  "base_url": "https://www.somosbelcorp.com",
+  "base_url": "https://sb2revamp2.somosbelcorp.com/",
   "credentials": {
     "user_env": "BELCORP_USER",
-    "pass_env": "BELCORP_PASS"
+    "pass_env": "BELCORP_PASS",
+    "country_env": "BELCORP_COUNTRY"
   },
   "inputs": {
-    "cuv_checkout": "10989",
+    "cuv_checkout": "01630",
     "search_term": "nitro",
     "mini_search_term": "vibranza"
   },

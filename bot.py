@@ -216,19 +216,41 @@ def _btn_texto(elemento):
 # ══════════════════════════════════════════════════════════════════════
 # Navegación general
 # ══════════════════════════════════════════════════════════════════════
+def verificar_sesion(page) -> bool:
+    """Detecta si la sesión expiró (redirigido a login). Si sí, re-loguea."""
+    try:
+        # Si el formulario de login es visible, la sesión expiró
+        btn_login = page.locator("#btnLogin")
+        if btn_login.count() and btn_login.is_visible(timeout=1000):
+            print("   ⚠️  Sesión expirada — re-logueando...")
+            login(page)
+            return True
+    except Exception:
+        pass
+    return False
+
+
 def login(page) -> None:
     """Navega a la home, rellena credenciales y espera a que cargue el menú principal."""
     print("➡️  Login...")
     page.goto(f"{BASE_URL}/")
+    page.wait_for_load_state("domcontentloaded")
+    page.wait_for_timeout(1000)
+
+    # Seleccionar país
+    pais = os.getenv(CONFIG["credentials"]["country_env"], "")
+    if pais:
+        page.select_option("#ddlPais", value=pais)
+        page.wait_for_timeout(500)
+        print(f"   🌎 País seleccionado: {pais}")
+
     page.fill("#txtUsuario", os.getenv(CONFIG["credentials"]["user_env"]))
     page.fill("#txtContrasenia", os.getenv(CONFIG["credentials"]["pass_env"]))
     page.click("#btnLogin")
-    # En desktop "Gana+" es visible en el menú; en mobile está oculto.
-    # Esperar un indicador que funcione en ambos modos.
+    # Esperar a que cargue la home post-login
     try:
-        page.wait_for_selector('li.menu-item >> text="Gana+"', timeout=8000)
+        page.wait_for_load_state("networkidle", timeout=15000)
     except Exception:
-        # Mobile fallback: esperar que cargue la home (logo, carrito, etc.)
         page.wait_for_load_state("domcontentloaded")
         page.wait_for_timeout(3000)
     print("✅ Login OK")
@@ -273,16 +295,24 @@ def registrar_handler_popups(page) -> None:
 
 def abrir_buscador_header(page):
     """Abre y retorna el input de búsqueda del header (desktop y mobile)."""
-    buscador = page.locator("input[placeholder='Buscar ofertas']")
+    buscador = page.locator("input[placeholder='Buscar ofertas']").first
     try:
         buscador.wait_for(state="visible", timeout=5000)
     except Exception:
+        # Intentar con placeholders alternativos
+        for placeholder in ["Buscar ofertas", "Buscar", "buscar"]:
+            alt = page.locator(f"input[placeholder*='{placeholder}']").first
+            try:
+                alt.wait_for(state="visible", timeout=2000)
+                return alt
+            except Exception:
+                continue
         # Mobile: puede requerir click en ícono de búsqueda para mostrar el campo
-        icono = page.locator("a.search-icon, button.search-icon, [class*='search-icon'], [aria-label*='Buscar']").first
+        icono = page.locator("a.search-icon, button.search-icon, [class*='search-icon'], [class*='search'] svg, [aria-label*='Buscar']").first
         if icono.count() and icono.is_visible():
             icono.click()
             page.wait_for_timeout(1500)
-        buscador = page.locator("input[placeholder='Buscar ofertas']")
+        buscador = page.locator("input[placeholder*='uscar']").first
         buscador.wait_for(state="visible", timeout=10000)
     return buscador
 
@@ -301,38 +331,30 @@ def ir_a_gana(page) -> None:
     En mobile abre primero el menú hamburguesa si el ítem no es visible.
     """
     print("➡️  Ir a Gana+...")
-    # Si el menú está oculto (mobile), abrirlo primero
-    menu_item = page.locator('li.menu-item >> text="Gana+"')
-    if not menu_item.is_visible():
-        # Intentar varias formas de abrir el menú mobile
-        hamburger = page.locator("button.menu-toggle, button.menu-hamburguesa, button[aria-label*='menú' i], .navbar-toggler, #btnMenuMobile").first
-        if hamburger.count() and hamburger.is_visible():
-            hamburger.click()
-            page.wait_for_timeout(1500)
-        else:
-            debug_screenshot(page, "ir_a_gana_no_hamburger")
-    try:
-        page.wait_for_selector('li.menu-item >> text="Gana+"', timeout=10000)
-        page.click('li.menu-item >> text="Gana+"')
-    except Exception:
-        # Mobile: obtener href de Gana+ y navegar con goto (evita TargetClosedError)
-        href = page.evaluate("""
-            () => {
-                const links = document.querySelectorAll('a');
-                for (const a of links) {
-                    if (a.textContent.trim().includes('Gana+') && a.href) {
-                        return a.href;
-                    }
+    # Obtener href de Gana+ via JS (evita strict mode con múltiples matches)
+    href = page.evaluate("""
+        () => {
+            const links = document.querySelectorAll('a');
+            for (const a of links) {
+                if (a.textContent.trim().includes('Gana+') && a.href && a.offsetParent !== null) {
+                    return a.href;
                 }
-                return null;
             }
-        """)
-        if href:
-            page.goto(href)
-            print(f"   ✅ Navegando a Gana+ via goto: {href}")
-        else:
-            page.goto(f"{BASE_URL}/Mobile/Ofertas")
-            print("   ✅ Navegando a Gana+ via URL directa")
+            // Fallback: cualquier link con Gana+ aunque no visible
+            for (const a of links) {
+                if (a.textContent.trim().includes('Gana+') && a.href) {
+                    return a.href;
+                }
+            }
+            return null;
+        }
+    """)
+    if href:
+        page.goto(href)
+        print(f"   ✅ Navegando a Gana+: {href}")
+    else:
+        page.goto(f"{BASE_URL}/Mobile/Ofertas")
+        print("   ✅ Navegando a Gana+ via URL directa")
     page.wait_for_load_state("domcontentloaded")
     page.wait_for_timeout(2000)
     print("✅ En Gana+")
@@ -512,128 +534,195 @@ def _cerrar_alerta_general(page) -> bool:
 # ══════════════════════════════════════════════════════════════════════
 # PDP – Agregar al carrito
 # ══════════════════════════════════════════════════════════════════════
+def _detectar_tipo_pdp(page):
+    """
+    Analiza el PDP actual y retorna un dict con el tipo de producto detectado.
+    Tipos posibles:
+      - 'ya_agregado':     producto ya en el pedido (no hay nada que hacer)
+      - 'simple':          click directo en Agregar (sin selecciones)
+      - 'seleccion_multi': requiere seleccionar opciones (tono, arma tu oferta)
+      - 'sin_stock':       botón deshabilitado sin selecciones pendientes
+      - 'desconocido':     no se pudo detectar
+    """
+    info = page.evaluate("""
+        () => {
+            const btn = document.querySelector('a#btnAgregalo, a.btn_validar_alertas, button#btnAgregalo');
+            const selecciones = document.querySelectorAll(
+                'button.tono_select_opt[btn-show-types-tones-modal], button[btn-show-types-tones-modal]'
+            );
+            const cajaAgregado = document.querySelector('div.caja_producto_agregado');
+            const cajaVisible = cajaAgregado && cajaAgregado.offsetParent !== null;
+
+            if (!btn) return {tipo: 'desconocido', razon: 'sin boton principal'};
+
+            const texto = (btn.innerText || '').trim();
+            const deshabilitado = btn.classList.contains('btn_deshabilitado_ficha')
+                               || btn.classList.contains('disabled')
+                               || btn.hasAttribute('disabled');
+            const totalSelecciones = selecciones.length;
+
+            // Ya agregado: deshabilitado sin selecciones pendientes, o caja visible
+            if (cajaVisible) return {tipo: 'ya_agregado', texto: texto};
+            if (deshabilitado && totalSelecciones === 0) return {tipo: 'ya_agregado', texto: texto};
+
+            // Sin stock: deshabilitado pero con selecciones = puede que falten opciones
+            if (deshabilitado && totalSelecciones > 0) return {tipo: 'seleccion_multi', texto: texto, selecciones: totalSelecciones};
+
+            // Con selecciones obligatorias
+            if (totalSelecciones > 0) return {tipo: 'seleccion_multi', texto: texto, selecciones: totalSelecciones};
+
+            // Simple
+            return {tipo: 'simple', texto: texto};
+        }
+    """)
+    return info
+
+
+def _pdp_completar_selecciones(page):
+    """Completa selecciones obligatorias (tonos, arma tu oferta, etc.)."""
+    selection_btns = page.locator(
+        'button.tono_select_opt[btn-show-types-tones-modal], button[btn-show-types-tones-modal]'
+    )
+    total_selecciones = selection_btns.count()
+    if total_selecciones == 0:
+        return True
+
+    print(f"   🎯 {total_selecciones} selección(es) obligatoria(s)")
+    for i in range(total_selecciones):
+        btn_sel = selection_btns.nth(i)
+        print(f"   📋 Abriendo selección {i+1}/{total_selecciones}...")
+        btn_sel.scroll_into_view_if_needed(timeout=3000)
+        btn_sel.click()
+        page.wait_for_timeout(800)
+        _cerrar_alerta_general(page)
+
+        # Esperar opciones del modal
+        opciones = page.locator("button[btn-eligelo]")
+        try:
+            opciones.first.wait_for(state="visible", timeout=6000)
+        except Exception:
+            print(f"      ⚠️  Modal sin opciones para selección {i+1} → skip")
+            _cerrar_alerta_general(page)
+            # Intentar cerrar modal si quedó abierto
+            page.evaluate("() => { const m = document.querySelector('.modal.show, .modal.in'); if (m) m.style.display = 'none'; }")
+            continue
+
+        # Leer la cantidad requerida desde el título del modal
+        requeridos = 1
+        try:
+            titulo = page.locator("h3[header-title]")
+            if titulo.count():
+                texto_titulo = titulo.first.inner_text().strip()
+                match = re.search(r'\d+', texto_titulo)
+                if match:
+                    requeridos = int(match.group())
+                    print(f"      📌 '{texto_titulo}' → seleccionar {requeridos}")
+        except Exception:
+            pass
+
+        # Clickear opciones no seleccionadas
+        opciones = page.locator("button[btn-eligelo]:not(.btn_deshabilitado)")
+        seleccionados = 0
+        for j in range(opciones.count()):
+            if seleccionados >= requeridos:
+                break
+            opt = opciones.nth(j)
+            if not opt.is_visible():
+                continue
+            opt.click()
+            seleccionados += 1
+            page.wait_for_timeout(1000)
+            try:
+                clase_btn = page.locator("button#btn-aplicar-seleccion").first.get_attribute("class") or ""
+                print(f"      ✔️  Opción {seleccionados}/{requeridos} seleccionada → btn class: '{clase_btn}'")
+            except Exception:
+                print(f"      ✔️  Opción {seleccionados}/{requeridos} seleccionada")
+
+        # Confirmar via JS (evita que locator handlers reseteen el botón)
+        clicked = page.evaluate("""
+            () => {
+                const btn = document.querySelector('button#btn-aplicar-seleccion.active');
+                if (btn) { btn.click(); return true; }
+                // Fallback: click aunque no tenga .active
+                const btn2 = document.querySelector('button#btn-aplicar-seleccion');
+                if (btn2 && !btn2.classList.contains('btn_deshabilitado_ficha')) { btn2.click(); return true; }
+                return false;
+            }
+        """)
+        if clicked:
+            print(f"      ✔️  Selección {i+1} confirmada")
+            page.wait_for_timeout(1200)
+            _cerrar_alerta_general(page)
+        else:
+            clase_final = page.locator("button#btn-aplicar-seleccion").first.get_attribute("class") or "no encontrado"
+            print(f"      ⚠️  Botón Aplicar no activo — clase: '{clase_final}'")
+
+    return True
+
+
+def _pdp_click_agregar(page):
+    """Click en botón principal Agregar de la PDP. Retorna True si ok."""
+    page.wait_for_timeout(1000)
+    resultado = page.evaluate("""
+        () => {
+            // Buscar botón principal con múltiples selectores
+            const selectores = [
+                'a#btnAgregalo.btn_validar_alertas',
+                'a#btnAgregalo',
+                'button#btnAgregalo',
+                'a.btn_validar_alertas',
+                'button.btn_validar_alertas'
+            ];
+            let btn = null;
+            for (const sel of selectores) {
+                btn = document.querySelector(sel);
+                if (btn && btn.offsetParent !== null) break;
+                btn = null;
+            }
+            if (!btn) return {ok: false, error: 'no encontrado'};
+            btn.scrollIntoView({block: 'center'});
+            const texto = (btn.innerText || '').trim();
+            const deshabilitado = btn.classList.contains('btn_deshabilitado_ficha')
+                               || btn.classList.contains('disabled')
+                               || btn.hasAttribute('disabled');
+            if (deshabilitado) return {ok: false, error: 'deshabilitado', texto: texto};
+            btn.click();
+            return {ok: true, texto: texto};
+        }
+    """)
+    return resultado
+
+
 def pdp_agregar(page):
     """
     Agrega el producto desde la PDP actual.
-
-    Flujo:
-      1. Si btn_deshabilitado_ficha existe sin selecciones pendientes → skip.
-      2. Selecciones obligatorias (button.tono_select_opt / "Arma tu oferta"):
-           Por cada botón de selección:
-             - Click para abrir modal
-             - Clic en button[btn-eligelo] uno a uno hasta que
-               button#btn-aplicar-seleccion.active se active
-             - Confirmar (con reintento si aparece alerta general)
-      3. Clic en a#btnAgregalo.btn_validar_alertas.
-         Si el botón aún dice "Elegir oferta"/"Elegir opción" significa que
-         no se completaron todas las selecciones; se intenta igual y se avisa.
-    Retorna True si se procesó, False si se saltó.
+    Detecta automáticamente el tipo de producto y actúa en consecuencia:
+      - simple:          click directo en Agregar
+      - seleccion_multi: completa selecciones, luego Agregar
+      - ya_agregado:     skip
+      - desconocido:     intenta agregar de todas formas
+    Retorna True si se agregó, False si se saltó.
     """
     print("🛍️  PDP → agregando al carrito...")
     try:
-        # 1) ¿Ya fue agregado?
-        btn_deshabilitado = page.query_selector("a#btnAgregalo.btn_deshabilitado_ficha")
-        modales_pendientes = page.locator(
-            'button.tono_select_opt.nobg[btn-show-types-tones-modal]'
-        ).count()
-        if btn_deshabilitado and btn_deshabilitado.is_visible() and modales_pendientes == 0:
-            print("   ⏭️  Producto ya agregado en pedido anterior → skip")
+        # 1) Detectar tipo de producto
+        tipo_info = _detectar_tipo_pdp(page)
+        tipo = tipo_info.get("tipo", "desconocido")
+        print(f"   🔍 Tipo detectado: {tipo} — texto: '{tipo_info.get('texto', '')}'")
+
+        # 2) Actuar según tipo
+        if tipo == "ya_agregado":
+            print("   ⏭️  Producto ya agregado → skip")
             return False
 
-        # 2) Selecciones obligatorias (una por cada slot de "Arma tu oferta" o
-        #    por cada atributo obligatorio como tono/color).
-        selection_btns = page.locator(
-            'button.tono_select_opt.nobg[btn-show-types-tones-modal]'
-        )
-        total_selecciones = selection_btns.count()
+        if tipo == "seleccion_multi":
+            _pdp_completar_selecciones(page)
 
-        if total_selecciones > 0:
-            print(f"   🎯 {total_selecciones} selección(es) obligatoria(s)")
-            for i in range(total_selecciones):
-                btn_sel = selection_btns.nth(i)
-                print(f"   📋 Abriendo selección {i+1}/{total_selecciones}...")
-                btn_sel.scroll_into_view_if_needed(timeout=3000)
-                btn_sel.click()
-                page.wait_for_timeout(800)
-                _cerrar_alerta_general(page)
+        if tipo == "desconocido":
+            print(f"   ⚠️  Tipo desconocido ({tipo_info.get('razon', '')}), intentando agregar...")
 
-                # Esperar opciones del modal
-                opciones = page.locator("button[btn-eligelo]")
-                try:
-                    opciones.first.wait_for(state="visible", timeout=6000)
-                except Exception:
-                    print(f"      ⚠️  Modal sin opciones para selección {i+1} → skip")
-                    _cerrar_alerta_general(page)
-                    continue
-
-                # Leer la cantidad requerida desde el título del modal
-                # h3[header-title] → texto "Elige X opción(es)"
-                requeridos = 1
-                try:
-                    import re
-                    titulo = page.locator("h3[header-title]")
-                    if titulo.count():
-                        texto_titulo = titulo.first.inner_text().strip()
-                        match = re.search(r'\d+', texto_titulo)
-                        if match:
-                            requeridos = int(match.group())
-                            print(f"      📌 '{texto_titulo}' → seleccionar {requeridos}")
-                except Exception:
-                    pass
-
-                # Clickear button[btn-eligelo] directamente.
-                # No re-clickear los ya seleccionados (tienen clase btn_deshabilitado).
-                opciones = page.locator("button[btn-eligelo]:not(.btn_deshabilitado)")
-                seleccionados = 0
-                for j in range(opciones.count()):
-                    if seleccionados >= requeridos:
-                        break
-                    opt = opciones.nth(j)
-                    if not opt.is_visible():
-                        continue
-                    opt.click()
-                    seleccionados += 1
-                    page.wait_for_timeout(1000)
-                    # Debug: mostrar clase actual del botón confirmar para diagnóstico
-                    try:
-                        clase_btn = page.locator("button#btn-aplicar-seleccion").first.get_attribute("class") or ""
-                        print(f"      ✔️  Opción {seleccionados}/{requeridos} seleccionada → btn class: '{clase_btn}'")
-                    except Exception:
-                        print(f"      ✔️  Opción {seleccionados}/{requeridos} seleccionada")
-
-                # El botón se activa (.active) justo después de seleccionar, pero
-                # wait_for dispara los locator handlers que lo resetean.
-                # Usamos JS directo para hacer click sin activar handlers de Playwright.
-                clicked = page.evaluate("""
-                    () => {
-                        const btn = document.querySelector('button#btn-aplicar-seleccion.active');
-                        if (btn) { btn.click(); return true; }
-                        return false;
-                    }
-                """)
-                if clicked:
-                    print(f"      ✔️  Selección {i+1} confirmada")
-                    page.wait_for_timeout(1200)
-                    _cerrar_alerta_general(page)
-                else:
-                    clase_final = page.locator("button#btn-aplicar-seleccion").first.get_attribute("class") or "no encontrado"
-                    print(f"      ⚠️  Botón Aplicar no activo — clase: '{clase_final}'")
-
-        # 3) Clic en botón principal de la PDP
-        #    JS scroll + click para evitar que add_locator_handler interfiera.
-        page.wait_for_timeout(1000)
-        resultado = page.evaluate("""
-            () => {
-                const btn = document.querySelector('a#btnAgregalo.btn_validar_alertas');
-                if (!btn) return {ok: false, error: 'no encontrado'};
-                btn.scrollIntoView({block: 'center'});
-                const texto = (btn.innerText || '').trim();
-                const deshabilitado = btn.classList.contains('btn_deshabilitado_ficha');
-                if (deshabilitado) return {ok: false, error: 'deshabilitado', texto: texto};
-                btn.click();
-                return {ok: true, texto: texto};
-            }
-        """)
+        # 3) Click en botón principal
+        resultado = _pdp_click_agregar(page)
         if resultado.get("ok"):
             print(f"   Botón PDP: '{resultado.get('texto', '')}'")
             page.wait_for_timeout(3500)
@@ -1891,6 +1980,7 @@ def run(flujos_a_ejecutar: list, mobile: bool = False) -> None:
 
         for key in flujos_a_ejecutar:
             try:
+                verificar_sesion(page)
                 FLUJOS[key](page)
             except Exception as e:
                 err_name = type(e).__name__

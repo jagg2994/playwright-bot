@@ -16,7 +16,25 @@ Crear archivo `.env` en la raiz del proyecto:
 ```
 BELCORP_USER=tu_usuario
 BELCORP_PASS=tu_contraseña
+BELCORP_COUNTRY=PE
 ```
+
+Codigos de pais disponibles:
+
+| Codigo | Pais |
+|--------|------|
+| `BO` | Bolivia |
+| `CL` | Chile |
+| `CO` | Colombia |
+| `CR` | Costa Rica |
+| `EC` | Ecuador |
+| `SV` | El Salvador |
+| `GT` | Guatemala |
+| `MX` | Mexico |
+| `PA` | Panama |
+| `PE` | Peru |
+| `PR` | Puerto Rico |
+| `DO` | Republica Dominicana |
 
 ### 2. Parametros del bot (`config.json`)
 
@@ -27,7 +45,8 @@ Editar `config.json` para cambiar URL, productos de busqueda o dispositivo mobil
   "base_url": "https://www.somosbelcorp.com",
   "credentials": {
     "user_env": "BELCORP_USER",
-    "pass_env": "BELCORP_PASS"
+    "pass_env": "BELCORP_PASS",
+    "country_env": "BELCORP_COUNTRY"
   },
   "inputs": {
     "cuv_checkout": "10989",
