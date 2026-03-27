@@ -1,0 +1,19 @@
+{
+  "base_url": "https://www.somosbelcorp.com",
+  "credentials": {
+    "user_env": "BELCORP_USER",
+    "pass_env": "BELCORP_PASS"
+  },
+  "inputs": {
+    "cuv_checkout": "10989",
+    "search_term": "nitro",
+    "mini_search_term": "vibranza"
+  },
+  "mobile": {
+    "device": "iPhone 13"
+  },
+  "output": {
+    "desktop": "eventos_analytics.json",
+    "mobile": "eventos_analytics_mobile.json"
+  }
+}

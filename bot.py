@@ -25,6 +25,13 @@ from tools.page_mapper import map_and_diagnose
 
 load_dotenv()
 
+# ── Configuración desde config.json ────────────────────────────────────
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
+with open(CONFIG_PATH, "r", encoding="utf-8") as _f:
+    CONFIG = json.load(_f)
+
+BASE_URL = CONFIG["base_url"]
+
 # ── Contexto global del flujo activo (se adjunta a cada evento GA4 capturado) ──
 current_flow = None
 
@@ -80,13 +87,10 @@ FLOW_FESTIVALES_PLP    = "festivales_plp_flow"
 FLOW_FESTIVALES_CARRUSEL = "festivales_carrusel_flow"
 FLOW_CARRUSEL_HOME       = "carrusel_home_flow"
 
-# ── Configuración por país ───────────────────────────────────────────
-# CUV para buscar en el buscador de checkout (cambiar según el país)
-CUV_CHECKOUT = os.getenv("BELCORP_CUV", "10989")
-# Término de búsqueda para el buscador del header (search PLP)
-SEARCH_TERM = os.getenv("BELCORP_SEARCH", "nitro")
-# Término de búsqueda para el mini buscador
-MINI_SEARCH_TERM = os.getenv("BELCORP_MINI_SEARCH", "vibranza")
+# ── Configuración de inputs (desde config.json, con fallback a env vars) ──
+CUV_CHECKOUT = os.getenv("BELCORP_CUV", CONFIG["inputs"]["cuv_checkout"])
+SEARCH_TERM = os.getenv("BELCORP_SEARCH", CONFIG["inputs"]["search_term"])
+MINI_SEARCH_TERM = os.getenv("BELCORP_MINI_SEARCH", CONFIG["inputs"]["mini_search_term"])
 
 # ── Selectores de botones de cierre de popup (orden de prioridad) ──────
 SELECTORES_POPUP = [
@@ -215,9 +219,9 @@ def _btn_texto(elemento):
 def login(page) -> None:
     """Navega a la home, rellena credenciales y espera a que cargue el menú principal."""
     print("➡️  Login...")
-    page.goto("https://www.somosbelcorp.com/")
-    page.fill("#txtUsuario", os.getenv("BELCORP_USER"))
-    page.fill("#txtContrasenia", os.getenv("BELCORP_PASS"))
+    page.goto(f"{BASE_URL}/")
+    page.fill("#txtUsuario", os.getenv(CONFIG["credentials"]["user_env"]))
+    page.fill("#txtContrasenia", os.getenv(CONFIG["credentials"]["pass_env"]))
     page.click("#btnLogin")
     # En desktop "Gana+" es visible en el menú; en mobile está oculto.
     # Esperar un indicador que funcione en ambos modos.
@@ -286,7 +290,7 @@ def abrir_buscador_header(page):
 def ir_a_pedido(page) -> None:
     """Navega directamente a la sección de Pedido (checkout) y espera los carruseles."""
     print("➡️  Ir a Pedido...")
-    page.goto("https://www.somosbelcorp.com/Pedido")
+    page.goto(f"{BASE_URL}/Pedido")
     page.wait_for_selector("div.contenedor_carrusel.slick-slider[data-seccion-productos]", timeout=15000)
     print("✅ En Pedido")
 
@@ -306,32 +310,31 @@ def ir_a_gana(page) -> None:
             hamburger.click()
             page.wait_for_timeout(1500)
         else:
-            # Fallback: usar page mapper para diagnosticar
             debug_screenshot(page, "ir_a_gana_no_hamburger")
     try:
         page.wait_for_selector('li.menu-item >> text="Gana+"', timeout=10000)
         page.click('li.menu-item >> text="Gana+"')
     except Exception:
-        # Mobile: el drawer-mask puede interceptar clicks. Usar JS directo.
-        clicked = page.evaluate("""
+        # Mobile: obtener href de Gana+ y navegar con goto (evita TargetClosedError)
+        href = page.evaluate("""
             () => {
                 const links = document.querySelectorAll('a');
                 for (const a of links) {
-                    if (a.textContent.trim().includes('Gana+') && a.offsetParent !== null) {
-                        a.click();
+                    if (a.textContent.trim().includes('Gana+') && a.href) {
                         return a.href;
                     }
                 }
-                return false;
+                return null;
             }
         """)
-        if clicked:
-            print(f"   ✅ Navegando a Gana+ via JS: {clicked}")
+        if href:
+            page.goto(href)
+            print(f"   ✅ Navegando a Gana+ via goto: {href}")
         else:
-            # Fallback: navegar directamente a la URL de Gana+
-            page.goto("https://www.somosbelcorp.com/Mobile/Ofertas")
+            page.goto(f"{BASE_URL}/Mobile/Ofertas")
             print("   ✅ Navegando a Gana+ via URL directa")
-    page.wait_for_timeout(3000)
+    page.wait_for_load_state("domcontentloaded")
+    page.wait_for_timeout(2000)
     print("✅ En Gana+")
 
 
@@ -354,6 +357,39 @@ def click_categorias(page) -> None:
 
 
 # ══════════════════════════════════════════════════════════════════════
+# Helper: detectar si un producto ya fue agregado
+# ══════════════════════════════════════════════════════════════════════
+def producto_ya_agregado(elemento, modo="plp"):
+    """
+    Detecta si un producto ya fue agregado al pedido.
+    Modos:
+      - 'plp':       article de PLP (query_selector) → div.caja_producto_agregado
+      - 'locator':   Playwright locator (slide/card) → div.caja_producto_agregado
+      - 'carrusel_home': slide de swiper → div.input-number en product-actions
+      - 'festival':  tarjeta festival → texto "Elegido" / div.btn_elegido
+    Retorna True si ya está agregado.
+    """
+    try:
+        if modo == "plp":
+            # query_selector (ElementHandle)
+            caja = elemento.query_selector("div.caja_producto_agregado")
+            return caja is not None and caja.is_visible()
+        elif modo == "locator":
+            caja = elemento.locator("div.caja_producto_agregado")
+            return caja.count() > 0 and caja.is_visible()
+        elif modo == "carrusel_home":
+            ya = elemento.locator("div.product-actions div.input-number")
+            return ya.count() > 0
+        elif modo == "festival":
+            elegido = elemento.locator("text=Elegido")
+            btn_elegido = elemento.locator("div.btn_elegido")
+            return (elegido.count() > 0) or (btn_elegido.count() > 0)
+    except Exception:
+        pass
+    return False
+
+
+# ══════════════════════════════════════════════════════════════════════
 # PLP – Agregar directo (botón dice exactamente "Agregar")
 # ══════════════════════════════════════════════════════════════════════
 def plp_agregar_directo(page):
@@ -367,9 +403,7 @@ def plp_agregar_directo(page):
         page.wait_for_selector("#FichasProductosBuscador article", timeout=10000)
         productos = page.query_selector_all("#FichasProductosBuscador article")
         for idx, prod in enumerate(productos, 1):
-            # Skip si ya fue agregado en un flujo anterior (y es visible)
-            caja = prod.query_selector("div.caja_producto_agregado")
-            if caja and caja.is_visible():
+            if producto_ya_agregado(prod, "plp"):
                 print(f"   ⏭️  Producto {idx} ya fue agregado → skip")
                 continue
             texto = _btn_texto(prod)
@@ -646,9 +680,7 @@ def carrusel_agregar_directo(page, start_ci=0):
             except Exception:
                 break
 
-            # Skip si ya fue agregado en un flujo anterior (y es visible)
-            caja_loc = slide.locator("div.caja_producto_agregado")
-            if caja_loc.count() and caja_loc.is_visible():
+            if producto_ya_agregado(slide, "locator"):
                 print(f"   ⏭️  Carrusel {ci+1}, slide {si+1} ya agregado → skip")
             else:
                 btn = slide.locator("a#btnAgregalo")
@@ -1271,7 +1303,7 @@ def flujo_6_search_plp(page) -> None:
     """
     def navegar_search(p):
         print(f"🔍 Buscando '{SEARCH_TERM}' desde el header...")
-        p.goto("https://www.somosbelcorp.com/")
+        p.goto(f"{BASE_URL}/")
         p.wait_for_load_state("domcontentloaded")
         p.wait_for_timeout(2000)
         cerrar_popups(p)
@@ -1314,7 +1346,7 @@ def flujo_7_mini_buscador(page) -> None:
 
     # 1) Ir al home y buscar
     print(f"🔍 Buscando '{MINI_SEARCH_TERM}' desde el header...")
-    page.goto("https://www.somosbelcorp.com/")
+    page.goto(f"{BASE_URL}/")
     page.wait_for_load_state("domcontentloaded")
     page.wait_for_timeout(2000)
     cerrar_popups(page)
@@ -1370,7 +1402,7 @@ def flujo_7_mini_buscador(page) -> None:
 
     # 3) Refrescar, volver a buscar y entrar a PDP de un producto no agregado
     print("\n🔄 Refrescando para buscar producto e ir a PDP...")
-    page.goto("https://www.somosbelcorp.com/")
+    page.goto(f"{BASE_URL}/")
     page.wait_for_load_state("domcontentloaded")
     page.wait_for_timeout(2000)
     cerrar_popups(page)
@@ -1400,7 +1432,7 @@ def flujo_7_mini_buscador(page) -> None:
                     href = link_pdp.get_attribute("href")
                     if href:
                         print(f"   ✅ Producto {i+1} → navegando a PDP: {href}")
-                        page.goto(f"https://www.somosbelcorp.com{href}")
+                        page.goto(f"{BASE_URL}{href}")
                         page.wait_for_load_state("domcontentloaded")
                         page.wait_for_timeout(2000)
                         cerrar_popups(page)
@@ -1431,7 +1463,7 @@ def flujo_7_mini_buscador(page) -> None:
                 link = page.locator("a[href*='/ficha/']").first
                 if link.count():
                     href = link.get_attribute("href")
-                    full_url = href if href.startswith("http") else f"https://www.somosbelcorp.com{href}"
+                    full_url = href if href.startswith("http") else f"{BASE_URL}{href}"
                     page.goto(full_url)
                     page.wait_for_load_state("domcontentloaded")
                     page.wait_for_timeout(2000)
@@ -1453,7 +1485,7 @@ def flujo_8_liquidacion(page) -> None:
     """
     def navegar_liquidacion(p):
         print("➡️  Ir a Liquidaciones...")
-        p.goto("https://www.somosbelcorp.com/")
+        p.goto(f"{BASE_URL}/")
         p.wait_for_load_state("domcontentloaded")
         p.wait_for_timeout(2000)
         cerrar_popups(p)
@@ -1474,7 +1506,7 @@ def flujo_9_festivales_plp(page) -> None:
     """
     def navegar_festivales(p):
         print("➡️  Ir a Festivales...")
-        p.goto("https://www.somosbelcorp.com/")
+        p.goto(f"{BASE_URL}/")
         p.wait_for_load_state("domcontentloaded")
         p.wait_for_timeout(2000)
         cerrar_popups(p)
@@ -1499,7 +1531,7 @@ def flujo_10_festivales_carrusel(page) -> None:
     set_flow(FLOW_FESTIVALES_CARRUSEL)
 
     print("➡️  Ir a Festivales desde el home...")
-    page.goto("https://www.somosbelcorp.com/")
+    page.goto(f"{BASE_URL}/")
     page.wait_for_load_state("domcontentloaded")
     page.wait_for_timeout(2000)
     cerrar_popups(page)
@@ -1563,9 +1595,7 @@ def flujo_10_festivales_carrusel(page) -> None:
                 print(f"   ✅ Click en 'Agregar' de tarjeta {i+1} via Playwright locator")
                 break
 
-            # Verificar si dice "Elegido"
-            elegido = tarjeta.locator("text=Elegido")
-            if elegido.count() > 0:
+            if producto_ya_agregado(tarjeta, "festival"):
                 print(f"   ℹ️  Tarjeta {i+1} ya elegida")
                 continue
 
@@ -1594,14 +1624,11 @@ def flujo_10_festivales_carrusel(page) -> None:
 
         for i in range(total):
             tarjeta = tarjetas.nth(i)
-            # Solo ir a PDP si tiene botón "Agregar" (no "Elegido")
-            agregar_span = tarjeta.locator("span", has_text="Agregar")
-            elegido = tarjeta.locator("text=Elegido")
-
-            if elegido.count() > 0:
+            if producto_ya_agregado(tarjeta, "festival"):
                 print(f"   ℹ️  Tarjeta {i+1} ya elegida — saltar")
                 continue
 
+            agregar_span = tarjeta.locator("span", has_text="Agregar")
             if agregar_span.count() > 0 and agregar_span.first.is_visible():
                 # Click en la zona redireccionarFicha para ir a PDP
                 redir = tarjeta.locator("div.redireccionarFicha").first
@@ -1639,7 +1666,7 @@ def flujo_11_carrusel_home(page) -> None:
     set_flow(FLOW_CARRUSEL_HOME)
 
     print("➡️  Ir al home...")
-    page.goto("https://www.somosbelcorp.com/")
+    page.goto(f"{BASE_URL}/")
     page.wait_for_load_state("domcontentloaded")
     page.wait_for_timeout(3000)
     cerrar_popups(page)
@@ -1669,13 +1696,10 @@ def flujo_11_carrusel_home(page) -> None:
 
         for i in range(min(total, 20)):
             slide = slides.nth(i)
-            # Verificar si tiene botón "Agregar" (no input-number que indica ya agregado)
-            btn_agregar = slide.locator("div.product-actions button span.pack-new-normal-text", has_text="Agregar")
-            ya_agregado = slide.locator("div.product-actions div.input-number")
-
-            if ya_agregado.count() > 0:
+            if producto_ya_agregado(slide, "carrusel_home"):
                 continue
 
+            btn_agregar = slide.locator("div.product-actions button span.pack-new-normal-text", has_text="Agregar")
             if btn_agregar.count() > 0:
                 try:
                     btn_parent = slide.locator("div.product-actions button.solid.secondary").first
@@ -1724,11 +1748,7 @@ def flujo_11_carrusel_home(page) -> None:
 
         for i in range(min(total, 20)):
             slide = slides.nth(i)
-            # Solo ir a PDP si tiene botón "Agregar" (no agregado)
-            btn_agregar = slide.locator("div.product-actions button span.pack-new-normal-text", has_text="Agregar")
-            ya_agregado = slide.locator("div.product-actions div.input-number")
-
-            if ya_agregado.count() > 0:
+            if producto_ya_agregado(slide, "carrusel_home"):
                 continue
             if i == agregado_idx:
                 continue
@@ -1755,7 +1775,7 @@ def flujo_11_carrusel_home(page) -> None:
                     if link.count():
                         href = link.get_attribute("href")
                         if href:
-                            full_url = href if href.startswith("http") else f"https://www.somosbelcorp.com{href}"
+                            full_url = href if href.startswith("http") else f"{BASE_URL}{href}"
                             page.goto(full_url)
                             page.wait_for_load_state("domcontentloaded")
                             page.wait_for_timeout(3000)
@@ -1845,9 +1865,10 @@ def run(flujos_a_ejecutar: list, mobile: bool = False) -> None:
         browser = p.chromium.launch(headless=False, slow_mo=300)
 
         if mobile:
-            device = p.devices["iPhone 13"]
+            device_name = CONFIG["mobile"]["device"]
+            device = p.devices[device_name]
             context = browser.new_context(**device)
-            print("📱 Modo mobile: iPhone 13")
+            print(f"📱 Modo mobile: {device_name}")
         else:
             context = browser.new_context()
 
@@ -1882,7 +1903,7 @@ def run(flujos_a_ejecutar: list, mobile: bool = False) -> None:
                     except Exception:
                         pass
                     if mobile:
-                        device = p.devices["iPhone 13"]
+                        device = p.devices[CONFIG["mobile"]["device"]]
                         context = browser.new_context(**device)
                     else:
                         context = browser.new_context()
@@ -1891,7 +1912,7 @@ def run(flujos_a_ejecutar: list, mobile: bool = False) -> None:
                     registrar_handler_popups(page)
                     login(page)
 
-        output_file = "eventos_analytics_mobile.json" if mobile else "eventos_analytics.json"
+        output_file = CONFIG["output"]["mobile"] if mobile else CONFIG["output"]["desktop"]
         guardar_eventos(acumulado, output_file)
         browser.close()
 
