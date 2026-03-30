@@ -35,6 +35,12 @@ BASE_URL = CONFIG["base_url"]
 # Selector de artículos en PLP — soporta entorno antiguo y nuevo
 PLP_ARTICLE = "#FichasProductosBuscador article, article[data-card-cuv]"
 
+
+class SinProductosError(Exception):
+    """Sección sin productos disponibles en este entorno/campaña."""
+    pass
+
+
 # ── Contexto global del flujo activo (se adjunta a cada evento GA4 capturado) ──
 current_flow = None
 
@@ -277,7 +283,7 @@ def cerrar_popups(page, max_rondas=4) -> None:
     Cierra todos los popups/modals visibles en rondas hasta que no quede ninguno.
     Útil tras una navegación donde aparecen múltiples modals en cascada.
     """
-    for ronda in range(max_rondas):
+    for _ in range(max_rondas):
         cerrado_algo = False
         for selector in SELECTORES_POPUP:
             try:
@@ -507,8 +513,7 @@ def plp_agregar_directo(page):
                 print("   ✅ Producto agregado via búsqueda JS directa (nueva UI)")
                 page.wait_for_timeout(2000)
                 return 1
-            print("   ❌ No hay artículos en PLP (nueva UI sin productos visibles)")
-            return None
+            raise SinProductosError("Sección sin productos visibles en este entorno/campaña")
 
         productos = page.query_selector_all(PLP_ARTICLE)
         for idx, prod in enumerate(productos, 1):
@@ -2158,10 +2163,11 @@ def guardar_status_flujos(resultados: list, mobile: bool) -> str:
     path = f"tools/output/flow_status_{ts}.json"
 
     # Calcular totales
-    total = len(resultados)
-    completos   = sum(1 for r in resultados if r["estado"] == "completo")
-    parciales   = sum(1 for r in resultados if r["estado"] == "parcial")
-    con_error   = sum(1 for r in resultados if r["estado"] == "error")
+    total         = len(resultados)
+    completos     = sum(1 for r in resultados if r["estado"] == "completo")
+    parciales     = sum(1 for r in resultados if r["estado"] == "parcial")
+    con_error     = sum(1 for r in resultados if r["estado"] == "error")
+    sin_productos = sum(1 for r in resultados if r["estado"] == "sin_productos")
 
     output = {
         "timestamp": datetime.now(pytz.timezone("America/Lima")).isoformat(),
@@ -2172,6 +2178,7 @@ def guardar_status_flujos(resultados: list, mobile: bool) -> str:
             "completos": completos,
             "parciales": parciales,
             "errores": con_error,
+            "sin_productos": sin_productos,
         },
         "flujos": resultados,
     }
@@ -2180,19 +2187,19 @@ def guardar_status_flujos(resultados: list, mobile: bool) -> str:
         json.dump(output, f, indent=2, ensure_ascii=False)
 
     # Tabla en consola
-    ICONOS = {"completo": "✅", "parcial": "⚠️ ", "error": "❌"}
-    print(f"\n{'═'*55}")
+    ICONOS = {"completo": "✅", "parcial": "⚠️ ", "error": "❌", "sin_productos": "⬜"}
+    print(f"\n{'═'*60}")
     print(f"  RESUMEN DE EJECUCIÓN — {'MOBILE' if mobile else 'DESKTOP'}")
-    print(f"{'═'*55}")
+    print(f"{'═'*60}")
     for r in resultados:
         icono = ICONOS.get(r["estado"], "❓")
         dur = f"{r['duracion_s']:.0f}s" if r.get("duracion_s") else "—"
         causa = f" | {r['causa']}" if r.get("causa") else ""
         print(f"  {icono} Flujo {r['flujo']:>3}  {r['nombre'][:30]:<30} {dur:>4}{causa}")
-    print(f"{'─'*55}")
-    print(f"  ✅ {completos}  ⚠️  {parciales}  ❌ {con_error}  de {total} flujos")
+    print(f"{'─'*60}")
+    print(f"  ✅ {completos}  ⚠️ {parciales}  ❌ {con_error}  ⬜ {sin_productos} sin productos  — total {total}")
     print(f"  📄 Status guardado: {path}")
-    print(f"{'═'*55}\n")
+    print(f"{'═'*60}\n")
 
     return path
 
@@ -2281,6 +2288,10 @@ def run(flujos_a_ejecutar: list, mobile: bool = False) -> None:
             try:
                 verificar_sesion(page)
                 FLUJOS[key](page)
+            except SinProductosError as e:
+                resultado["estado"] = "sin_productos"
+                resultado["causa"] = str(e)
+                print(f"\n   ⬜ FLUJO {key} sin productos en este entorno: {e}")
             except Exception as e:
                 err_name = type(e).__name__
                 resultado["estado"] = "error"
