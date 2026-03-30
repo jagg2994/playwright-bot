@@ -1,0 +1,18 @@
+# Outputs generados — cambian en cada ejecución, no aportan contexto
+eventos_analytics.json
+eventos_analytics_mobile.json
+tools/output/
+debug/
+
+# Caché de Python
+__pycache__/
+tools/__pycache__/
+*.pyc
+*.pyo
+
+# Archivos de sistema
+.DS_Store
+.env
+
+# Archivos de diagnóstico histórico (usar solo cuando se necesite)
+tool.md
