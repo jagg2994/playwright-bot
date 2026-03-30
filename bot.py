@@ -2080,6 +2080,124 @@ FLUJOS = {
 
 
 # ══════════════════════════════════════════════════════════════════════
+# P12 — Limpiar carrito antes de ejecutar flujos
+# ══════════════════════════════════════════════════════════════════════
+def limpiar_carrito(page) -> int:
+    """
+    Navega al pedido y elimina todos los productos del carrito.
+    Retorna la cantidad de productos eliminados.
+    """
+    print("\n🧹 Limpiando carrito antes de ejecutar flujos...")
+    try:
+        page.goto(f"{BASE_URL.rstrip('/')}/Pedido")
+        page.wait_for_load_state("domcontentloaded")
+        page.wait_for_timeout(3000)
+        verificar_sesion(page)
+        cerrar_popups(page)
+
+        eliminados = 0
+        max_intentos = 30  # Evitar loop infinito
+
+        for _ in range(max_intentos):
+            # Buscar botón de eliminar producto (cualquier variante)
+            eliminado = page.evaluate("""() => {
+                const selectores = [
+                    'button[id*="btnEliminar"]',
+                    'button[class*="eliminar"]',
+                    'a[class*="eliminar"]',
+                    'button[title*="Eliminar"]',
+                    'button[aria-label*="Eliminar"]',
+                    'span[class*="eliminar"]',
+                    '[class*="btn-delete"]',
+                    '[class*="btn_eliminar"]',
+                    'button:has-text("Eliminar")',
+                ];
+                for (const sel of selectores) {
+                    const btns = document.querySelectorAll(sel);
+                    for (const btn of btns) {
+                        if (btn.offsetParent !== null) {
+                            btn.click();
+                            return sel;
+                        }
+                    }
+                }
+                return null;
+            }""")
+
+            if not eliminado:
+                break  # No hay más productos
+
+            print(f"   🗑️  Eliminando producto ({eliminado.split(':')[0][:30]})")
+            page.wait_for_timeout(1500)
+            cerrar_popups(page)  # Confirmar modal si aparece
+            page.wait_for_timeout(1000)
+            eliminados += 1
+
+        if eliminados > 0:
+            print(f"   ✅ {eliminados} producto(s) eliminado(s) del carrito")
+        else:
+            print("   ℹ️  Carrito ya estaba vacío")
+
+        return eliminados
+
+    except Exception as e:
+        print(f"   ⚠️  Error limpiando carrito: {e}")
+        return 0
+
+
+# ══════════════════════════════════════════════════════════════════════
+# P13 — Output de estado de flujos por ejecución
+# ══════════════════════════════════════════════════════════════════════
+def guardar_status_flujos(resultados: list, mobile: bool) -> str:
+    """
+    Guarda un resumen del resultado de cada flujo en flow_status_<timestamp>.json.
+    También imprime una tabla resumen en consola.
+    """
+    os.makedirs("tools/output", exist_ok=True)
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    path = f"tools/output/flow_status_{ts}.json"
+
+    # Calcular totales
+    total = len(resultados)
+    completos   = sum(1 for r in resultados if r["estado"] == "completo")
+    parciales   = sum(1 for r in resultados if r["estado"] == "parcial")
+    con_error   = sum(1 for r in resultados if r["estado"] == "error")
+
+    output = {
+        "timestamp": datetime.now(pytz.timezone("America/Lima")).isoformat(),
+        "modo": "mobile" if mobile else "desktop",
+        "env": BASE_URL,
+        "resumen": {
+            "total": total,
+            "completos": completos,
+            "parciales": parciales,
+            "errores": con_error,
+        },
+        "flujos": resultados,
+    }
+
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(output, f, indent=2, ensure_ascii=False)
+
+    # Tabla en consola
+    ICONOS = {"completo": "✅", "parcial": "⚠️ ", "error": "❌"}
+    print(f"\n{'═'*55}")
+    print(f"  RESUMEN DE EJECUCIÓN — {'MOBILE' if mobile else 'DESKTOP'}")
+    print(f"{'═'*55}")
+    for r in resultados:
+        icono = ICONOS.get(r["estado"], "❓")
+        dur = f"{r['duracion_s']:.0f}s" if r.get("duracion_s") else "—"
+        causa = f" | {r['causa']}" if r.get("causa") else ""
+        print(f"  {icono} Flujo {r['flujo']:>3}  {r['nombre'][:30]:<30} {dur:>4}{causa}")
+    print(f"{'─'*55}")
+    print(f"  ✅ {completos}  ⚠️  {parciales}  ❌ {con_error}  de {total} flujos")
+    print(f"  📄 Status guardado: {path}")
+    print(f"{'═'*55}\n")
+
+    return path
+
+
+# ══════════════════════════════════════════════════════════════════════
 # Guardado de eventos GA4
 # ══════════════════════════════════════════════════════════════════════
 def guardar_eventos(acumulado: list, output_file: str = "eventos_analytics.json") -> None:
@@ -2136,12 +2254,37 @@ def run(flujos_a_ejecutar: list, mobile: bool = False) -> None:
         registrar_handler_popups(page)
         login(page)
 
+        # P12 — Limpiar carrito antes de ejecutar
+        limpiar_carrito(page)
+
+        # P13 — Tracking de resultados por flujo
+        resultados_flujos = []
+
+        NOMBRES_FLUJO = {
+            "1": "Ésika PLP + PDP",
+            "2": "Fragancias PLP + PDP",
+            "3": "Carrusel Gana+",
+            "4": "Pedido",
+            "5": "Buscador checkout",
+            "6": "Search PLP",
+            "7": "Mini buscador",
+            "8": "Liquidación PLP",
+            "9": "Festivales PLP",
+            "10": "Festivales carrusel",
+            "11": "Carrusel home",
+        }
+
         for key in flujos_a_ejecutar:
+            t_inicio = datetime.now()
+            resultado = {"flujo": key, "nombre": NOMBRES_FLUJO.get(key, key),
+                         "estado": "completo", "causa": None, "duracion_s": None}
             try:
                 verificar_sesion(page)
                 FLUJOS[key](page)
             except Exception as e:
                 err_name = type(e).__name__
+                resultado["estado"] = "error"
+                resultado["causa"] = f"{err_name}: {str(e)[:120]}"
                 print(f"\n   ❌ FLUJO {key} FALLÓ ({err_name}): {e}")
                 # Si el browser/page murió, recrear
                 if "TargetClosed" in err_name or "closed" in str(e).lower():
@@ -2159,9 +2302,13 @@ def run(flujos_a_ejecutar: list, mobile: bool = False) -> None:
                     page.on("request", handle_request)
                     registrar_handler_popups(page)
                     login(page)
+            finally:
+                resultado["duracion_s"] = (datetime.now() - t_inicio).total_seconds()
+                resultados_flujos.append(resultado)
 
         output_file = CONFIG["output"]["mobile"] if mobile else CONFIG["output"]["desktop"]
         guardar_eventos(acumulado, output_file)
+        guardar_status_flujos(resultados_flujos, mobile)
         browser.close()
 
 
