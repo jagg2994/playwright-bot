@@ -1,0 +1,739 @@
+[
+  {
+    "cuv": "116289",
+    "seccion": "Gana+ Esika",
+    "plp": {
+      "btn_texto": "Agregar",
+      "agotado": false,
+      "tiene_rangos": false
+    },
+    "pdp": {
+      "boton": {
+        "texto": "Agregar",
+        "id": "btnAgregalo",
+        "clases": "btn_agregalo btnAgregarView btn_defecto btn_validar_alertas btn_deshabilitado_ficha",
+        "deshabilitado": true,
+        "visible": true
+      },
+      "selecciones": [
+        {
+          "texto": "Elige 1 opción",
+          "clases": "tono_select_opt nobg "
+        }
+      ],
+      "inputs_cantidad": [
+        {
+          "id": "txtCantidad",
+          "type": "text",
+          "value": "1",
+          "min": null,
+          "max": null,
+          "clases": "txt_cantidad_pedido_new ValidaNumeral ValidaPasteNumeral"
+        }
+      ],
+      "controles_cantidad": 0,
+      "textos_restriccion": [
+        "Productos agotados",
+        "ésika\nElige tu favorito\n2.0 G\n14.500 x 14.500 x 112.000 MM",
+        "Elige tu favorito",
+        "Elige 1 opción",
+        "Colonia Colors in Nature Green Coconut, 200 ml",
+        "Debes elegir tus opciones para poder agregar la oferta.",
+        "Elige Tu Favorito",
+        "ésika\nLabial COLORFIX Barra\nPara ti en Gana+\nS/. 15.90\nVende a:\nS/. 29.90\nGana:\nS/. 14.00\nCoral Natural\nPrevious\nNext",
+        "ésika\nLabial COLORFIX Barra\nPara ti en Gana+\nS/. 15.90\nVende a:\nS/. 29.90\nGana:\nS/. 14.00",
+        "Labial COLORFIX Barra",
+        "Solo queda 0 und.",
+        "ésika\nElige tu favorito\nPara ti en Gana+\nS/. 19.90\nVende a:\nS/. 40.60\nGana:\nS/. 20.70"
+      ],
+      "ya_agregado": true,
+      "nombre": "SESIÓN FINALIZADA",
+      "cuv": "116289",
+      "marca": "Ingresar",
+      "precio": "",
+      "url": "https://sb2revamp2.somosbelcorp.com/Detalles/Evento/202516/116289/1272801?MarcacionTextoBuscador="
+    },
+    "tipo_detectado": "ya_agregado"
+  },
+  {
+    "cuv": "114962",
+    "seccion": "Gana+ Esika",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "114960",
+    "seccion": "Gana+ Esika",
+    "plp": {
+      "btn_texto": "Agregar",
+      "agotado": false,
+      "tiene_rangos": true
+    },
+    "pdp": {
+      "boton": {
+        "texto": "Agregar",
+        "id": "btnAgregalo",
+        "clases": "btn_agregalo_producto btn_defecto w-100 fs-14 FichaAgregarProductoBuscador btnAgregar",
+        "deshabilitado": false,
+        "visible": true
+      },
+      "selecciones": [],
+      "inputs_cantidad": [],
+      "controles_cantidad": 6,
+      "textos_restriccion": [
+        "Productos agotados",
+        "ésika\nColonia Colors in Nature Green Coconut, 200 ml\nPara ti en Gana+\nS/. 11.90\nVende a:\nS/. 40.60\nGana:\nS/. 28.70",
+        "Colonia Colors in Nature Green Coconut, 200 ml",
+        "Solo queda 0 und.",
+        "ésika\nElige tus 3 favoritos: Arma tu oferta\nPara ti en Gana+\nS/. 148.89\nVende a:\nS/. 350.70\nGana:\nS/. 201.81",
+        "Elige tus 3 favoritos: Arma tu oferta",
+        "Elegir opción",
+        "ésika\nElige tu favorito + 1 Colonia ésika Colo...\nPara ti en Gana+\nS/. 124.90\nVende a:\nS/. 163.60\nGana:\nS/. 38.70",
+        "Elige tu favorito + 1 Colonia ésika Colo...",
+        "Ver detalle\nCyzone\nPack x4 Prints 30 ml\nPara ti en Gana+\nS/. 50.00\nVende a:\nS/. 159.60\nGana:\nS/. 109.60",
+        "Cyzone\nPack x4 Prints 30 ml\nPara ti en Gana+\nS/. 50.00\nVende a:\nS/. 159.60\nGana:\nS/. 109.60",
+        "Pack x4 Prints 30 ml"
+      ],
+      "ya_agregado": false,
+      "nombre": "SESIÓN FINALIZADA",
+      "cuv": "116289",
+      "marca": "Ingresar",
+      "precio": "",
+      "url": "https://sb2revamp2.somosbelcorp.com/gana"
+    },
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "116271",
+    "seccion": "Gana+ Esika",
+    "plp": {
+      "btn_texto": "Elegir opción",
+      "agotado": false,
+      "tiene_rangos": false
+    },
+    "pdp": {
+      "boton": {
+        "texto": "Agregar",
+        "id": "btnAgregalo",
+        "clases": "btn_agregalo btnAgregarView btn_defecto btn_validar_alertas btn_deshabilitado_ficha",
+        "deshabilitado": true,
+        "visible": true
+      },
+      "selecciones": [
+        {
+          "texto": "Elige 2 opciones",
+          "clases": "tono_select_opt nobg"
+        }
+      ],
+      "inputs_cantidad": [
+        {
+          "id": "txtCantidad",
+          "type": "text",
+          "value": "1",
+          "min": null,
+          "max": null,
+          "clases": "txt_cantidad_pedido_new ValidaNumeral ValidaPasteNumeral"
+        }
+      ],
+      "controles_cantidad": 0,
+      "textos_restriccion": [
+        "Productos agotados",
+        "x 2\nProductos\nElige 2 opciones",
+        "Elige 2 opciones",
+        "Debes elegir tus opciones para poder agregar la oferta.",
+        "ésika\n1 Labial COLORFIX Barra + 1 Set de Arete...\nPara ti en Gana+\nS/. 34.90\nVende a:\nS/. 85.90\nGana:\nS/. 51.00",
+        "1 Labial COLORFIX Barra + 1 Set de Arete...",
+        "Solo queda 0 und.",
+        "Cyzone\nElige 2 Mega Full Size Máscara de Pestañ...\nPara ti en Gana+\nS/. 37.90\nVende a:\nS/. 63.80\nGana:\nS/. 25.90",
+        "Elige 2 Mega Full Size Máscara de Pestañ...",
+        "ésika\nPack x2 Labiales COLORFIX Barra\nPara ti en Gana+\nS/. 40.90\nVende a:\nS/. 59.80\nGana:\nS/. 18.90",
+        "Pack x2 Labiales COLORFIX Barra",
+        "ésika\nPack x3 Labiales COLORFIX Barra\nPara ti en Gana+\nS/. 41.88\nVende a:\nS/. 89.70\nGana:\nS/. 47.82\nElegir opción"
+      ],
+      "ya_agregado": false,
+      "nombre": "SESIÓN FINALIZADA",
+      "cuv": "116271",
+      "marca": "Ingresar",
+      "precio": "",
+      "url": "https://sb2revamp2.somosbelcorp.com/Detalles/Evento/202516/116271/1272801?MarcacionTextoBuscador="
+    },
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "116234",
+    "seccion": "Gana+ Esika",
+    "plp": {
+      "btn_texto": "Elegir opción",
+      "agotado": false,
+      "tiene_rangos": false
+    },
+    "pdp": {
+      "boton": {
+        "texto": "Agregar",
+        "id": "btnAgregalo",
+        "clases": "btn_agregalo btnAgregarView btn_defecto btn_validar_alertas btn_deshabilitado_ficha",
+        "deshabilitado": true,
+        "visible": true
+      },
+      "selecciones": [
+        {
+          "texto": "Elige 3 opciones",
+          "clases": "tono_select_opt nobg"
+        }
+      ],
+      "inputs_cantidad": [
+        {
+          "id": "txtCantidad",
+          "type": "text",
+          "value": "1",
+          "min": null,
+          "max": null,
+          "clases": "txt_cantidad_pedido_new ValidaNumeral ValidaPasteNumeral"
+        }
+      ],
+      "controles_cantidad": 3,
+      "textos_restriccion": [
+        "Productos agotados",
+        "ésika\nElige tus 3 favoritos: Arma tu oferta\n45.0 Ml\n61.000 x 40.000 x 115.000 MM",
+        "Elige tus 3 favoritos: Arma tu oferta",
+        "x 3\nProductos\nElige 3 opciones",
+        "Elige 3 opciones",
+        "Debes elegir tus opciones para poder agregar la oferta.",
+        "ésika\nElige tus 3 favoritos: Arma tu oferta\nPara ti en Gana+\nS/. 156.90\nVende a:\nS/. 350.70\nGana:\nS/. 193.80",
+        "Solo queda 0 und.",
+        "ésika\nElige tus 2 favoritos + 1 City Love 50 m...\nPara ti en Gana+\nS/. 119.90\nVende a:\nS/. 286.99\nGana:\nS/. 167.09",
+        "Elige tus 2 favoritos + 1 City Love 50 m...",
+        "Elige 1 opción\n\n0 Seleccionados",
+        "Elige 1 opción"
+      ],
+      "ya_agregado": false,
+      "nombre": "SESIÓN FINALIZADA",
+      "cuv": "116234",
+      "marca": "Ingresar",
+      "precio": "",
+      "url": "https://sb2revamp2.somosbelcorp.com/Detalles/Evento/202516/116234/1272801?MarcacionTextoBuscador="
+    },
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "116228",
+    "seccion": "Gana+ Esika",
+    "plp": {
+      "btn_texto": "Elegir opción",
+      "agotado": false,
+      "tiene_rangos": false
+    },
+    "pdp": {
+      "boton": {
+        "texto": "Agregar",
+        "id": "btnAgregalo",
+        "clases": "btn_agregalo_producto btn_defecto w-100 fs-14 FichaAgregarProductoBuscador btnAgregar",
+        "deshabilitado": false,
+        "visible": true
+      },
+      "selecciones": [],
+      "inputs_cantidad": [],
+      "controles_cantidad": 0,
+      "textos_restriccion": [
+        "Productos agotados",
+        "ésika\nColonia Colors in Nature Green Coconut, 200 ml\nPara ti en Gana+\nS/. 11.90\nVende a:\nS/. 40.60\nGana:\nS/. 28.70",
+        "Colonia Colors in Nature Green Coconut, 200 ml",
+        "Solo queda 0 und.",
+        "ésika\nElige tus 3 favoritos: Arma tu oferta\nPara ti en Gana+\nS/. 148.89\nVende a:\nS/. 350.70\nGana:\nS/. 201.81",
+        "Elige tus 3 favoritos: Arma tu oferta",
+        "Elegir opción",
+        "ésika\nElige tu favorito + 1 Colonia ésika Colo...\nPara ti en Gana+\nS/. 124.90\nVende a:\nS/. 163.60\nGana:\nS/. 38.70",
+        "Elige tu favorito + 1 Colonia ésika Colo...",
+        "Ver detalle\nCyzone\nPack x4 Prints 30 ml\nPara ti en Gana+\nS/. 50.00\nVende a:\nS/. 159.60\nGana:\nS/. 109.60",
+        "Cyzone\nPack x4 Prints 30 ml\nPara ti en Gana+\nS/. 50.00\nVende a:\nS/. 159.60\nGana:\nS/. 109.60",
+        "Pack x4 Prints 30 ml"
+      ],
+      "ya_agregado": false,
+      "nombre": "SESIÓN FINALIZADA",
+      "cuv": "116289",
+      "marca": "Ingresar",
+      "precio": "",
+      "url": "https://sb2revamp2.somosbelcorp.com/gana"
+    },
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "116219",
+    "seccion": "Gana+ Esika",
+    "plp": {
+      "btn_texto": "Elegir opción",
+      "agotado": false,
+      "tiene_rangos": false
+    },
+    "pdp": {
+      "boton": {
+        "texto": "Agregar",
+        "id": "btnAgregalo",
+        "clases": "btn_agregalo btnAgregarView btn_defecto btn_validar_alertas btn_deshabilitado_ficha",
+        "deshabilitado": true,
+        "visible": true
+      },
+      "selecciones": [
+        {
+          "texto": "Elige 1 opción",
+          "clases": "tono_select_opt nobg"
+        },
+        {
+          "texto": "Elige 1 opción",
+          "clases": "tono_select_opt nobg"
+        }
+      ],
+      "inputs_cantidad": [
+        {
+          "id": "txtCantidad",
+          "type": "text",
+          "value": "1",
+          "min": null,
+          "max": null,
+          "clases": "txt_cantidad_pedido_new ValidaNumeral ValidaPasteNumeral"
+        }
+      ],
+      "controles_cantidad": 21,
+      "textos_restriccion": [
+        "Productos agotados",
+        "Elige tu favorito + 1 Colonia ésika Colors in Nature + 2 Sweet Black Exclusive 50 ml: Arma tu oferta",
+        "Elige 1 opción",
+        "Debes elegir tus opciones para poder agregar la oferta.",
+        "Solo queda 0 und.",
+        "ésika\n2 Colonias ésika Colors in Nature + 2 Sw...\nPara ti en Gana+\nS/. 132.90\nVende a:\nS/. 189.60\nGana:\nS/. 56.70",
+        "2 Colonias ésika Colors in Nature + 2 Sw...",
+        "ésika\nElige tus 2 favoritos + 2 Colonias ésika...\nPara ti en Gana+\nS/. 132.90\nVende a:\nS/. 107.60",
+        "Elige tus 2 favoritos + 2 Colonias ésika...",
+        "ésika\nElige tu favorito + 1 Colonia ésika Colo...\nPara ti en Gana+\nS/. 132.90\nVende a:\nS/. 163.60\nGana:\nS/. 30.70",
+        "Elige tu favorito + 1 Colonia ésika Colo...",
+        "8 Colonias ésika Colors in Nature + 4 De..."
+      ],
+      "ya_agregado": false,
+      "nombre": "SESIÓN FINALIZADA",
+      "cuv": "116219",
+      "marca": "Ingresar",
+      "precio": "",
+      "url": "https://sb2revamp2.somosbelcorp.com/Detalles/Evento/202516/116219/1272801?MarcacionTextoBuscador="
+    },
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "114956",
+    "seccion": "Gana+ Esika",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "114953",
+    "seccion": "Gana+ Esika",
+    "plp": {
+      "btn_texto": "Agregar",
+      "agotado": false,
+      "tiene_rangos": true
+    },
+    "pdp": {
+      "boton": {
+        "texto": "Agregar",
+        "id": "btnAgregalo",
+        "clases": "btn_agregalo_producto btn_defecto w-100 fs-14 FichaAgregarProductoBuscador btnAgregar",
+        "deshabilitado": false,
+        "visible": true
+      },
+      "selecciones": [],
+      "inputs_cantidad": [],
+      "controles_cantidad": 6,
+      "textos_restriccion": [
+        "Productos agotados",
+        "ésika\nColonia Colors in Nature Green Coconut, 200 ml\nPara ti en Gana+\nS/. 11.90\nVende a:\nS/. 40.60\nGana:\nS/. 28.70",
+        "Colonia Colors in Nature Green Coconut, 200 ml",
+        "Solo queda 0 und.",
+        "ésika\nElige tus 3 favoritos: Arma tu oferta\nPara ti en Gana+\nS/. 148.89\nVende a:\nS/. 350.70\nGana:\nS/. 201.81",
+        "Elige tus 3 favoritos: Arma tu oferta",
+        "Elegir opción",
+        "ésika\nElige tu favorito + 1 Colonia ésika Colo...\nPara ti en Gana+\nS/. 124.90\nVende a:\nS/. 163.60\nGana:\nS/. 38.70",
+        "Elige tu favorito + 1 Colonia ésika Colo...",
+        "Ver detalle\nCyzone\nPack x4 Prints 30 ml\nPara ti en Gana+\nS/. 50.00\nVende a:\nS/. 159.60\nGana:\nS/. 109.60",
+        "Cyzone\nPack x4 Prints 30 ml\nPara ti en Gana+\nS/. 50.00\nVende a:\nS/. 159.60\nGana:\nS/. 109.60",
+        "Pack x4 Prints 30 ml"
+      ],
+      "ya_agregado": false,
+      "nombre": "SESIÓN FINALIZADA",
+      "cuv": "116289",
+      "marca": "Ingresar",
+      "precio": "",
+      "url": "https://sb2revamp2.somosbelcorp.com/gana"
+    },
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "116200",
+    "seccion": "Gana+ Esika",
+    "plp": {
+      "btn_texto": "Agregar",
+      "agotado": false,
+      "tiene_rangos": false
+    },
+    "pdp": {
+      "boton": {
+        "texto": "Agregar",
+        "id": "btnAgregalo",
+        "clases": "btn_agregalo btnAgregarView btn_defecto btn_validar_alertas btn_deshabilitado_ficha",
+        "deshabilitado": true,
+        "visible": true
+      },
+      "selecciones": [
+        {
+          "texto": "Elige 1 opción",
+          "clases": "tono_select_opt nobg "
+        }
+      ],
+      "inputs_cantidad": [
+        {
+          "id": "txtCantidad",
+          "type": "text",
+          "value": "1",
+          "min": null,
+          "max": null,
+          "clases": "txt_cantidad_pedido_new ValidaNumeral ValidaPasteNumeral"
+        }
+      ],
+      "controles_cantidad": 0,
+      "textos_restriccion": [
+        "Productos agotados",
+        "ésika\n1 Labial COLORFIX Barra\n2.0 G\n14.500 x 14.500 x 112.000 MM",
+        "1 Labial COLORFIX Barra",
+        "Elige 1 opción",
+        "Debes elegir tus opciones para poder agregar la oferta.",
+        "1 Labial Colorfix Barra",
+        "ésika\n1 Labial COLORFIX Barra\nPara ti en Gana+\nS/. 20.90\nVende a:\nS/. 29.90\nGana:\nS/. 9.00",
+        "Solo queda 0 und.",
+        "ésika\nLabial COLORFIX Barra\nPara ti en Revista\nS/. 20.90\nVende a:\nS/. 29.90\nGana:\nS/. 9.00",
+        "Labial COLORFIX Barra",
+        "ésika\n1 Labial COLORFIX Barra\nPara ti en Gana+\nS/. 23.90\nVende a:\nS/. 29.90\nGana:\nS/. 6.00",
+        "Cyzone\nElige 2 Mega Full Size Máscara de Pestañ...\nPara ti en Gana+\nS/. 29.90\nVende a:\nS/. 63.80\nGana:\nS/. 33.90"
+      ],
+      "ya_agregado": false,
+      "nombre": "SESIÓN FINALIZADA",
+      "cuv": "116200",
+      "marca": "Ingresar",
+      "precio": "",
+      "url": "https://sb2revamp2.somosbelcorp.com/Detalles/Evento/202516/116200/1272801?MarcacionTextoBuscador="
+    },
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "115596",
+    "seccion": "Gana+ Esika",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "115144",
+    "seccion": "Gana+ Esika",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "114805",
+    "seccion": "Gana+ Esika",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "115692",
+    "seccion": "Gana+ Esika",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "114882",
+    "seccion": "Gana+ Esika",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "114957",
+    "seccion": "Gana+ LBel",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "114861",
+    "seccion": "Gana+ LBel",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "115395",
+    "seccion": "Gana+ LBel",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "114830",
+    "seccion": "Gana+ LBel",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "114889",
+    "seccion": "Gana+ LBel",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "115382",
+    "seccion": "Gana+ LBel",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "114945",
+    "seccion": "Gana+ LBel",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "115588",
+    "seccion": "Gana+ LBel",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "114871",
+    "seccion": "Gana+ LBel",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "115374",
+    "seccion": "Gana+ LBel",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "115247",
+    "seccion": "Gana+ LBel",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "115138",
+    "seccion": "Gana+ LBel",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "116165",
+    "seccion": "Gana+ LBel",
+    "plp": {
+      "btn_texto": "Elegir opción",
+      "agotado": false,
+      "tiene_rangos": false
+    },
+    "pdp": {
+      "boton": {
+        "texto": "Agregar",
+        "id": "btnAgregalo",
+        "clases": "btn_agregalo btnAgregarView btn_defecto btn_validar_alertas btn_deshabilitado_ficha",
+        "deshabilitado": true,
+        "visible": true
+      },
+      "selecciones": [
+        {
+          "texto": "Elige 1 opción",
+          "clases": "tono_select_opt nobg"
+        }
+      ],
+      "inputs_cantidad": [
+        {
+          "id": "txtCantidad",
+          "type": "text",
+          "value": "1",
+          "min": null,
+          "max": null,
+          "clases": "txt_cantidad_pedido_new ValidaNumeral ValidaPasteNumeral"
+        }
+      ],
+      "controles_cantidad": 12,
+      "textos_restriccion": [
+        "Productos agotados",
+        "L'BEL\nElige tu favorito + 1 Satin Rouge 50 ml + 1 Fleur L'BEL 50 ml: Arma tu oferta",
+        "Elige tu favorito + 1 Satin Rouge 50 ml + 1 Fleur L'BEL 50 ml: Arma tu oferta",
+        "x 1\nProducto\nElige 1 opción\nx 1\nPerfume de Mujer Fleur 50 ml. 50.0 Ml\nx 1\nSatin Rouge Perfume de Mujer 50 ml 50.0 Ml",
+        "Elige 1 opción",
+        "Debes elegir tus opciones para poder agregar la oferta.",
+        "L'BEL\nElige tu favorito + 1 Satin Rouge 50 ml ...\nPara ti en Gana+\nS/. 156.90\nVende a:\nS/. 373.70\nGana:\nS/. 216.80",
+        "Elige tu favorito + 1 Satin Rouge 50 ml ...",
+        "Solo queda 0 und.",
+        "L'BEL\nPack x2 Satin Rouge 50 ml\nPara ti en Gana+\nS/. 173.90\nVende a:\nS/. 279.80\nGana:\nS/. 105.90\nAgregar",
+        "L'BEL\nPack x2 Satin Rouge 50 ml\nPara ti en Gana+\nS/. 173.90\nVende a:\nS/. 279.80\nGana:\nS/. 105.90",
+        "Pack x2 Satin Rouge 50 ml"
+      ],
+      "ya_agregado": false,
+      "nombre": "SESIÓN FINALIZADA",
+      "cuv": "116165",
+      "marca": "Ingresar",
+      "precio": "",
+      "url": "https://sb2revamp2.somosbelcorp.com/Detalles/Evento/202516/116165/1272801?MarcacionTextoBuscador="
+    },
+    "tipo_detectado": "agotado"
+  },
+  {
+    "cuv": "35804",
+    "seccion": "Gana+ Cyzone",
+    "plp": {
+      "btn_texto": "Agregar",
+      "agotado": false,
+      "tiene_rangos": false
+    },
+    "pdp": {
+      "boton": {
+        "texto": "Agregar",
+        "id": "btnAgregalo",
+        "clases": "btn_agregalo btnAgregarView btn_defecto btn_validar_alertas",
+        "deshabilitado": false,
+        "visible": true
+      },
+      "selecciones": [],
+      "inputs_cantidad": [
+        {
+          "id": "txtCantidad",
+          "type": "text",
+          "value": "1",
+          "min": null,
+          "max": null,
+          "clases": "txt_cantidad_pedido_new ValidaNumeral ValidaPasteNumeral"
+        }
+      ],
+      "controles_cantidad": 24,
+      "textos_restriccion": [
+        "Productos agotados",
+        "Debes elegir tus opciones para poder agregar la oferta.",
+        "Solo queda 0 und.",
+        "Cyzone\nElige 1 All Black 90 ml/Nitro 100 ml/Nit...\nPara ti en Gana+\nS/. 69.90\nVende a:\nS/. 164.70\nGana:\nS/. 94.80",
+        "Elige 1 All Black 90 ml/Nitro 100 ml/Nit...",
+        "Cyzone\nElige tus 3 favoritos + Elige tus 3 favo...\nPara ti en Gana+\nS/. 69.99\nVende a:\nS/. 494.10\nGana:\nS/. 424.11",
+        "Elige tus 3 favoritos + Elige tus 3 favo...",
+        "Cyzone\nElige 1 All Black Edición Limitada 90 ml...\nPara ti en Gana+\nS/. 75.90\nVende a:\nS/. 130.03\nGana:\nS/. 54.13",
+        "Elige 1 All Black Edición Limitada 90 ml...",
+        "Elegir opción",
+        "Cyzone\nElige tus 3 favoritos: Arma tu oferta\nPara ti en Gana+\nS/. 75.90\nVende a:\nS/. 184.80\nGana:\nS/. 108.90",
+        "Elige tus 3 favoritos: Arma tu oferta"
+      ],
+      "ya_agregado": true,
+      "nombre": "SESIÓN FINALIZADA",
+      "cuv": "35804",
+      "marca": "Ingresar",
+      "precio": "",
+      "url": "https://sb2revamp2.somosbelcorp.com/Detalles/Evento/202516/35804/1272801?MarcacionTextoBuscador="
+    },
+    "tipo_detectado": "ya_agregado"
+  },
+  {
+    "cuv": "114959",
+    "seccion": "Gana+ Cyzone",
+    "plp": {
+      "btn_texto": "¿Lo querías en tu pedido?",
+      "agotado": true,
+      "tiene_rangos": false
+    },
+    "pdp": null,
+    "tipo_detectado": "agotado"
+  }
+]

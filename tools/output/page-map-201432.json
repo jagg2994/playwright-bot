@@ -1,0 +1,259 @@
+{
+  "url": "https://sb2revamp2.somosbelcorp.com/portal/",
+  "titulo": "SomosBelcorp",
+  "accionables": [
+    {
+      "tipo": "button",
+      "texto": "",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.style__ToggleMenu-sc-2k4ns5-0.eIvVBe.menu-toggle",
+      "selector_aria": "[aria-label=\"Menu\"]",
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 18,
+        "left": 32
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Cerrar sesión",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.style__Host-sc-6ypr8x-0.fkdsvw.link",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Cerrar sesión')",
+      "rect": {
+        "top": 22,
+        "left": 1168
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Ver mi perfil",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.style__Host-sc-6ypr8x-0.fkdsvw.link",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Ver mi perfil')",
+      "rect": {
+        "top": 113,
+        "left": -202
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": "[aria-label=\"C16_Mascaras_SB_APP_PE\"]",
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": -812,
+        "left": 218
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": "[aria-label=\"C16_City_SB_APP_PE\"]",
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": -812,
+        "left": 1228
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": "[aria-label=\"C16_Navidad_SB_APP_PE\"]",
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": -812,
+        "left": 2238
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": "[aria-label=\"C16_Black_SB_APP_PE\"]",
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": -812,
+        "left": 3248
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Seguimiento de pedido",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.style__Host-sc-6ypr8x-0.iWBaWZ.outline",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Seguimiento de pedido')",
+      "rect": {
+        "top": -284,
+        "left": 534
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Vas ganando: S/.2,072\n\nTe falta S/.315.55 para el 35% de descuento",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Vas ganando: S/.2,072\n\nTe falta S/.315.5')",
+      "rect": {
+        "top": -152,
+        "left": 218
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Elige tu bonificación, revisa tus puntos y gana más",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Elige tu bonificación, revisa tus puntos')",
+      "rect": {
+        "top": -152,
+        "left": 706
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": "[aria-label=\"Experta\"]",
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 940,
+        "left": 218
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": "[aria-label=\"Revista Gana\"]",
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 940,
+        "left": 543
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": "[aria-label=\"Liquidaciones\"]",
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 940,
+        "left": 868
+      }
+    }
+  ],
+  "obstaculos": [
+    {
+      "tipo": "modal",
+      "selector": ".style__Host-sc-1hha7h4-0",
+      "texto": "",
+      "btn_cerrar": null
+    },
+    {
+      "tipo": "otro",
+      "selector": ".style__SwiperArrow-sc-uhz7w2-2",
+      "texto": "",
+      "btn_cerrar": null
+    },
+    {
+      "tipo": "otro",
+      "selector": ".style__SwiperArrow-sc-uhz7w2-2",
+      "texto": "",
+      "btn_cerrar": null
+    },
+    {
+      "tipo": "iframe",
+      "selector": "#_hjSafeContext_16729191",
+      "src": "about:blank"
+    },
+    {
+      "tipo": "iframe",
+      "selector": "#insider-worker",
+      "src": "https://belcorp.api.useinsider.com/worker-new.html"
+    }
+  ],
+  "formularios": [],
+  "navegacion": [
+    {
+      "texto": "Cerrar sesión",
+      "href": "https://sb2revamp2.somosbelcorp.com/Login/LogOut",
+      "selector_aria": null
+    },
+    {
+      "texto": "Ver mi perfil",
+      "href": "https://sb2revamp2.somosbelcorp.com/MiPerfil",
+      "selector_aria": null
+    },
+    {
+      "texto": "Seguimiento de pedido",
+      "href": "https://sb2revamp2.somosbelcorp.com/MisPedidosNew/Index",
+      "selector_aria": null
+    },
+    {
+      "texto": "Vas ganando: S/.2,072\n\nTe falta S/.315.55 para el 35% de des",
+      "href": "https://sb2revamp2.somosbelcorp.com/MisGanancias",
+      "selector_aria": null
+    },
+    {
+      "texto": "Elige tu bonificación, revisa tus puntos y gana más",
+      "href": "https://sb2revamp2.somosbelcorp.com/MisIncentivos",
+      "selector_aria": null
+    }
+  ]
+}

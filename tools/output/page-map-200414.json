@@ -1,0 +1,783 @@
+{
+  "url": "https://www.somosbelcorp.com/?returnUrl=%2Fliquidacion%3F_gl%3D1%2A22r5af%2A_ga%2ANzA0MTIxMTkuMTc3NDgzMjM4Mw..%2A_ga_E8ZZQ0YW21%2AczE3NzQ4MzIzODMkbzEkZzEkdDE3NzQ4MzI2MjYkajQkbDAkaDA.",
+  "titulo": "Somos Belcorp ¡Ingresa tu pedido online aquí!",
+  "accionables": [
+    {
+      "tipo": "button",
+      "texto": "Enviar e-mail",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.btn_enviar_email.RecuperarPorCorreo",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Enviar e-mail')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Enviar mensaje",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.btn_enviar_sms.opcionSms",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Enviar mensaje')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Ingresar al chat",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#divChatearConNosotros",
+      "selector_clase": "button.btn_ingresar_chat",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Ingresar al chat')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Ingresar al chat",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.btn_ingresar_chat",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Ingresar al chat')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "INGRESA CON FACEBOOK",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": "#btnLoginFB",
+      "selector_clase": "button.loginBtn.loginBtn--facebook.center_facebook",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('INGRESA CON FACEBOOK')",
+      "rect": {
+        "top": 190,
+        "left": 65
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Ingresa con Facebook",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnLoginFB2",
+      "selector_clase": "button.loginBtn.loginBtn--facebook",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Ingresa con Facebook')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "www.somosbelcorp.com",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('www.somosbelcorp.com')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "www.uneteabelcorp.com",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('www.uneteabelcorp.com')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Acceso",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnAccesoUrl",
+      "selector_clase": "a.enlace_archivo_arco",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Acceso')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Cancelación",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnCancelacionUrl",
+      "selector_clase": "a.enlace_archivo_arco",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Cancelación')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Oposición",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnOposicionUrl",
+      "selector_clase": "a.enlace_archivo_arco",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Oposición')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Rectificación",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnRectificacionUrl",
+      "selector_clase": "a.enlace_archivo_arco",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Rectificación')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnCerrarContraseniaPopup",
+      "selector_clase": "a.cerrar",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnCerrarContraseniaPopup",
+      "selector_clase": "a.cerrar",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnCerrarContraseniaPopup",
+      "selector_clase": "a.cerrar",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Regresar",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnRegresar",
+      "selector_clase": "a.btn_regresar_ver_otras_opciones",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Regresar')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnCerrarContraseniaEnviadaPopup",
+      "selector_clase": "a.cerrar",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#aEnlaceCambiarContraseña",
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Llamar de Lima",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.central_telefonica",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Llamar de Lima')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnCerrarCambioContraseniaPopup",
+      "selector_clase": "a.cerrar",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnCerrarChatDisabledPopup",
+      "selector_clase": "a.cerrar",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#abrirMSJ02",
+      "selector_clase": "a.helper.hdos",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 393,
+        "left": 371
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Belcorp Digital",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.enlace__sb",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Belcorp Digital')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "¿Olvidaste tu contraseña?",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('¿Olvidaste tu contraseña?')",
+      "rect": {
+        "top": 434,
+        "left": 65
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "RETIRO TARJETA PAY CARD CON SALDO",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('RETIRO TARJETA PAY CARD CON SALDO')",
+      "rect": {
+        "top": 520,
+        "left": 65
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "PRIVACIDAD DE DATOS",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('PRIVACIDAD DE DATOS')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "¿Olvidaste tu contraseña?",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('¿Olvidaste tu contraseña?')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": "#footer_esika",
+      "selector_clase": "a.logos_footer.logos_footer--esika",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 688,
+        "left": 108
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "PAGOS EN LÍNEA AQUÍ",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": "#PagoLinea",
+      "selector_clase": "a.nav0.m-left-cuatro",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('PAGOS EN LÍNEA AQUÍ')",
+      "rect": {
+        "top": 16,
+        "left": 596
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "ENTREGAS Y COBRANZAS",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#DespachosCobranza",
+      "selector_clase": "a.nav0.m-left-cuatro",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('ENTREGAS Y COBRANZAS')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "ÚNETE A BELCORP",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.nav1.m-left-dos",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('ÚNETE A BELCORP')",
+      "rect": {
+        "top": 16,
+        "left": 762
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "CREA TU CORREO AQUÍ",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.hide-responsive.nav2.m-left-uno",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('CREA TU CORREO AQUÍ')",
+      "rect": {
+        "top": 16,
+        "left": 918
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "POLÍTICAS DE GARANTÍA",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.nav1.m-left-uno.background-none",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('POLÍTICAS DE GARANTÍA')",
+      "rect": {
+        "top": 16,
+        "left": 1090
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#footer_esika",
+      "selector_clase": "a.logos_footer.logos_footer--esika",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "input",
+      "texto": "ENVIAR",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnRecuperarClave",
+      "selector_clase": "input.btnCrear",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "input:has-text('ENVIAR')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "input",
+      "texto": "INGRESA A TU CUENTA",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": "#btnLogin",
+      "selector_clase": "input.btnCrear",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "input:has-text('INGRESA A TU CUENTA')",
+      "rect": {
+        "top": 466,
+        "left": 65
+      }
+    },
+    {
+      "tipo": "input",
+      "texto": "",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#SubmitButton",
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "span",
+      "texto": "OK, GRACIAS",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "span:has-text('OK, GRACIAS')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "div",
+      "texto": "",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": "#abrirMSJ01",
+      "selector_clase": "div.helper-icon.huno",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 342,
+        "left": 342
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "INGRESA A TU CUENTA",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnLogin2",
+      "selector_clase": "a.btn_validar_usuario",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('INGRESA A TU CUENTA')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "div",
+      "texto": "INGRESA CON FACEBOOK\nó",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "div.formbtn",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "div:has-text('INGRESA CON FACEBOOK\nó')",
+      "rect": {
+        "top": 190,
+        "left": 65
+      }
+    },
+    {
+      "tipo": "div",
+      "texto": "INGRESA CON FACEBOOK",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "div.content_btn_face",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "div:has-text('INGRESA CON FACEBOOK')",
+      "rect": {
+        "top": 190,
+        "left": 65
+      }
+    },
+    {
+      "tipo": "div",
+      "texto": "Ingresa con Facebook",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "div.content_btn_face",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "div:has-text('Ingresa con Facebook')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "div",
+      "texto": "",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": "#Div3",
+      "selector_clase": "div.btn.padding-top-5",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 337,
+        "left": 332
+      }
+    },
+    {
+      "tipo": "div",
+      "texto": "",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": "#Div5",
+      "selector_clase": "div.btn",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 391,
+        "left": 332
+      }
+    },
+    {
+      "tipo": "div",
+      "texto": "¿Olvidaste tu contraseña?",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "div.formbtn",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "div:has-text('¿Olvidaste tu contraseña?')",
+      "rect": {
+        "top": 434,
+        "left": 65
+      }
+    },
+    {
+      "tipo": "div",
+      "texto": "¿Olvidaste tu contraseña?",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "div.formbtn",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "div:has-text('¿Olvidaste tu contraseña?')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    }
+  ],
+  "obstaculos": [
+    {
+      "tipo": "iframe",
+      "selector": "iframe",
+      "src": "https://www.google.com/recaptcha/api2/anchor?ar=1&k=6Le4B8oZAAAAAHCzhn2ollHDuwLYHKIEPyfXF8Av&co=aHR0cHM6Ly93d3cuc29tb3NiZWxjb3JwLmNvbTo0NDM.&hl=es&v=79clEdOi5xQbrrpL2L8kGmK3&size=invisible&anchor-ms=2"
+    },
+    {
+      "tipo": "iframe",
+      "selector": "iframe",
+      "src": ""
+    },
+    {
+      "tipo": "iframe",
+      "selector": "#_hjSafeContext_24171387",
+      "src": "about:blank"
+    },
+    {
+      "tipo": "iframe",
+      "selector": "#insider-worker",
+      "src": "https://belcorp.api.useinsider.com/worker-new.html"
+    }
+  ],
+  "formularios": [
+    {
+      "id": "frmLogin",
+      "campos": [
+        {
+          "nombre": "CodigoISO",
+          "tipo": "select-one",
+          "selector": "#ddlPais",
+          "requerido": false,
+          "valor": "CO"
+        },
+        {
+          "nombre": "CodigoUsuario",
+          "tipo": "text",
+          "selector": "#txtUsuario",
+          "requerido": false,
+          "valor": ""
+        },
+        {
+          "nombre": "txtContrasenia",
+          "tipo": "password",
+          "selector": "#txtContrasenia",
+          "requerido": false,
+          "valor": ""
+        },
+        {
+          "nombre": "btnLogin",
+          "tipo": "submit",
+          "selector": "#btnLogin",
+          "requerido": false,
+          "valor": "INGRESA A TU CUENTA"
+        },
+        {
+          "nombre": "SubmitButton",
+          "tipo": "submit",
+          "selector": "#SubmitButton",
+          "requerido": false,
+          "valor": ""
+        }
+      ],
+      "boton_submit": "INGRESA A TU CUENTA"
+    }
+  ],
+  "navegacion": [
+    {
+      "texto": "RETIRO TARJETA PAY CARD CON SALDO",
+      "href": "https://cdn1-prd.somosbelcorp.com/FileConsultoras/CO/RetiroFondosTarjetaHelm.PDF",
+      "selector_aria": null
+    }
+  ]
+}

@@ -1,0 +1,1355 @@
+{
+  "url": "https://sb2revamp2.somosbelcorp.com//liquidacion",
+  "titulo": "Belcorp | Portal Consultoras",
+  "accionables": [
+    {
+      "tipo": "button",
+      "texto": "x",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.btncerrar",
+      "selector_aria": null,
+      "selector_data": "[data-dismiss=\"modal\"]",
+      "selector_texto": "button:has-text('x')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Aceptar",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnempezar",
+      "selector_clase": "button.btn-reg",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Aceptar')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.sc-dmyCSP.dKoVIl.menu-toggle",
+      "selector_aria": "[aria-label=\"Menu\"]",
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 20,
+        "left": 32
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Mi negocio",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.toggle-submenu.closed",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Mi negocio')",
+      "rect": {
+        "top": 20,
+        "left": 219
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Maquillador virtual",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.toggle-submenu.closed",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Maquillador virtual')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Nuestras marcas",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.toggle-submenu.closed",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Nuestras marcas')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Ayuda",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.toggle-submenu.closed",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Ayuda')",
+      "rect": {
+        "top": 489,
+        "left": -258
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Legal",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.toggle-submenu.closed",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Legal')",
+      "rect": {
+        "top": 529,
+        "left": -258
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "OK",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.btn_ok",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('OK')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Cerrar sesión",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.text-center.text-bold.popup__somos__belcorp__btn",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Cerrar sesión')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Ingresar",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.center-block.text-center.text-bold",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Ingresar')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Continuar",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.text-center.text-bold.multimarca-background-color",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Continuar')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Ir a pedido",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.text-center.text-bold.multimarca-background-color",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Ir a pedido')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Digita el código aquí",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.checkout-search-btn.fs-16.text-bold",
+      "selector_aria": null,
+      "selector_data": "[data-redireccionar-boton=\"\"]",
+      "selector_texto": "button:has-text('Digita el código aquí')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Ver detalle",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.ver-details-btn",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Ver detalle')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "¡Reemplazar por la Mejor oferta!",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnReemplazarOferta",
+      "selector_clase": "button.btn-oferta-mejor.primary-btn",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('¡Reemplazar por la Mejor oferta!')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Mantengo mis ofertas seleccionadas",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#skipBtn",
+      "selector_clase": "button.secondary-btn",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Mantengo mis ofertas seleccionadas')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Entiendo",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.btn_aceptar",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Entiendo')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#cerrar_modal_lateral",
+      "selector_clase": "button.button_cerrar",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "No, gracias",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnRechaza",
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('No, gracias')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Si, acepto",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnAcepta",
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Si, acepto')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Entendido",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnEntendido",
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Entendido')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "No, mantener",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.fs-16.font-weight-bold.border-0",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('No, mantener')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Sí, cambiar",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.fs-16.font-weight-bold.border-0",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Sí, cambiar')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "×",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.modal-close",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('×')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Sí, eliminar",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.modal-confirm",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Sí, eliminar')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Entendido",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Entendido')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Ingresa tu pedido",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Ingresa tu pedido')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Mis pedidos",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Mis pedidos')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Mis pagos",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Mis pagos')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Productos agotados",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Productos agotados')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Mis beneficios",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Mis beneficios')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Fechas de campaña",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Fechas de campaña')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Mis certificados",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Mis certificados')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Mis clientes",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Mis clientes')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Camino Brillante",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Camino Brillante')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Liquidación",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Liquidación')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Cambios y Devoluciones",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Cambios y Devoluciones')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Gana refiriendo",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Gana refiriendo')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Tu Voz Online",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Tu Voz Online')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Crece Tu Negocio",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Crece Tu Negocio')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Mis ganancias",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Mis ganancias')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Mi Tienda Online",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Mi Tienda Online')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Material redes sociales",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Material redes sociales')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Asesores de belleza",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Asesores de belleza')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Ésika",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": "[aria-label=\"Ésika\"]",
+      "selector_data": null,
+      "selector_texto": "a:has-text('Ésika')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Lbel",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": "[aria-label=\"Lbel\"]",
+      "selector_data": null,
+      "selector_texto": "a:has-text('Lbel')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Cyzone",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": "[aria-label=\"Cyzone\"]",
+      "selector_data": null,
+      "selector_texto": "a:has-text('Cyzone')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Ésika",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Ésika')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Lbel",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Lbel')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Cyzone",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Cyzone')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Lo nuevo",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Lo nuevo')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Ver todas",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Ver todas')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Mi Revista Gana",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Mi Revista Gana')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Bonificaciones",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Bonificaciones')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Experta en Belleza",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Experta en Belleza')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Gana+",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Gana+')",
+      "rect": {
+        "top": 22,
+        "left": 363
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Cerrar sesión",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.sc-beySPh.jfzFZz.link",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Cerrar sesión')",
+      "rect": {
+        "top": 22,
+        "left": 1168
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Ver mi perfil",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.sc-beySPh.jfzFZz.link",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Ver mi perfil')",
+      "rect": {
+        "top": 113,
+        "left": -202
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Inicio",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Inicio')",
+      "rect": {
+        "top": 168,
+        "left": -274
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Catálogos",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Catálogos')",
+      "rect": {
+        "top": 220,
+        "left": -274
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Pedido",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Pedido')",
+      "rect": {
+        "top": 272,
+        "left": -274
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Bonificaciones",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Bonificaciones')",
+      "rect": {
+        "top": 324,
+        "left": -274
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Gana+",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Gana+')",
+      "rect": {
+        "top": 376,
+        "left": -274
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Preguntas frecuentes",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Preguntas frecuentes')",
+      "rect": {
+        "top": 529,
+        "left": -258
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Contáctanos",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Contáctanos')",
+      "rect": {
+        "top": 577,
+        "left": -258
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Políticas de privacidad",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Políticas de privacidad')",
+      "rect": {
+        "top": 569,
+        "left": -258
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Condiciones de uso web",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Condiciones de uso web')",
+      "rect": {
+        "top": 617,
+        "left": -258
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Procedimiento y formulario para el ejercicio de derechos arco",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Procedimiento y formulario para el ejerc')",
+      "rect": {
+        "top": 665,
+        "left": -258
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Código de ética CAPEVEDI",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Código de ética CAPEVEDI')",
+      "rect": {
+        "top": 749,
+        "left": -258
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Quiz CAPEVEDI",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Quiz CAPEVEDI')",
+      "rect": {
+        "top": 793,
+        "left": -258
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Video CAPEVEDI",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Video CAPEVEDI')",
+      "rect": {
+        "top": 841,
+        "left": -258
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Fechas de promociones",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Fechas de promociones')",
+      "rect": {
+        "top": 885,
+        "left": -258
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Códigos sanitarios",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Códigos sanitarios')",
+      "rect": {
+        "top": 933,
+        "left": -258
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Políticas post venta",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Políticas post venta')",
+      "rect": {
+        "top": 981,
+        "left": -258
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Términos y condiciones - Mi Tienda Online",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Términos y condiciones - Mi Tienda Onlin')",
+      "rect": {
+        "top": 1029,
+        "left": -258
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Terminos y condiciones contrato de compra venta de productos con descuento",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Terminos y condiciones contrato de compr')",
+      "rect": {
+        "top": 1093,
+        "left": -258
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Autorización de consulta en buró de crédito",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Autorización de consulta en buró de créd')",
+      "rect": {
+        "top": 1197,
+        "left": -258
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "CERRAR",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('CERRAR')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "HOME",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.d-block",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('HOME')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    }
+  ],
+  "obstaculos": [
+    {
+      "tipo": "modal",
+      "selector": ".sc-hIPBNq",
+      "texto": "",
+      "btn_cerrar": null
+    },
+    {
+      "tipo": "iframe",
+      "selector": "#_hjSafeContext_12186581",
+      "src": "about:blank"
+    },
+    {
+      "tipo": "iframe",
+      "selector": "#xaxis_dm_2294042530",
+      "src": "https://cdn-akamai.mookie1.com/html/x71.html"
+    },
+    {
+      "tipo": "iframe",
+      "selector": "#insider-worker",
+      "src": "https://belcorp.api.useinsider.com/worker-new.html"
+    }
+  ],
+  "formularios": [
+    {
+      "id": "https://sb2revamp2.somosbelcorp.com//liquidacion",
+      "campos": [
+        {
+          "nombre": "nombre",
+          "tipo": "text",
+          "selector": "#desSuenio",
+          "requerido": false,
+          "valor": ""
+        },
+        {
+          "nombre": "result",
+          "tipo": "text",
+          "selector": "#result",
+          "requerido": false,
+          "valor": ""
+        },
+        {
+          "nombre": "montoSuenio",
+          "tipo": "text",
+          "selector": "#montoSuenio",
+          "requerido": false,
+          "valor": ""
+        }
+      ],
+      "boton_submit": null
+    }
+  ],
+  "navegacion": [
+    {
+      "texto": "Gana+",
+      "href": "https://sb2revamp2.somosbelcorp.com/Ofertas",
+      "selector_aria": null
+    },
+    {
+      "texto": "Cerrar sesión",
+      "href": "https://sb2revamp2.somosbelcorp.com/Login/LogOut",
+      "selector_aria": null
+    },
+    {
+      "texto": "Ver mi perfil",
+      "href": "https://sb2revamp2.somosbelcorp.com/MiPerfil",
+      "selector_aria": null
+    },
+    {
+      "texto": "Inicio",
+      "href": "https://sb2revamp2.somosbelcorp.com/Bienvenida",
+      "selector_aria": null
+    },
+    {
+      "texto": "Catálogos",
+      "href": "https://sb2revamp2.somosbelcorp.com/MisCatalogosRevistas",
+      "selector_aria": null
+    },
+    {
+      "texto": "Preguntas frecuentes",
+      "href": "https://www.somosbelcorp.com/Content/FAQ/Preguntas frecuentes Portal Consultora PE.pdf",
+      "selector_aria": null
+    },
+    {
+      "texto": "Contáctanos",
+      "href": "http://belcorpresponde.somosbelcorp.com/?NOMB=MERCEDES ELVIRA CRUZ MALDONADO&PAIS=PE&CODI=011246222&CORR=mercedescruz26@gmail.com&TELF=; 949716237",
+      "selector_aria": null
+    },
+    {
+      "texto": "Políticas de privacidad",
+      "href": "https://somosbelcorpprd.s3.us-east-1.amazonaws.com/FileConsultoras/PE/Política_de_privacidad-SB-PE.pdf",
+      "selector_aria": null
+    },
+    {
+      "texto": "Condiciones de uso web",
+      "href": "https://www.somosbelcorp.com/Content/FAQ/CONDICIONES_DE_USO_WEB_PE.pdf",
+      "selector_aria": null
+    },
+    {
+      "texto": "Procedimiento y formulario para el ejercicio de derechos arc",
+      "href": "https://www.somosbelcorp.com/Content/FAQ/PROCEDIMIENTO_Y_FORMULARIO_PARA_EL_EJERCICIO_DE_DERECHOS_ARCO_PE.pdf",
+      "selector_aria": null
+    },
+    {
+      "texto": "Código de ética CAPEVEDI",
+      "href": "https://www.capevedi.com/asociados/",
+      "selector_aria": null
+    },
+    {
+      "texto": "Quiz CAPEVEDI",
+      "href": "https://www.somosbelcorp.com/Content/FAQ/QUIZCAPEVEDI_PE.pdf",
+      "selector_aria": null
+    },
+    {
+      "texto": "Video CAPEVEDI",
+      "href": "https://www.youtube.com/watch?v=cC8Omu2JYhM&t=15s",
+      "selector_aria": null
+    },
+    {
+      "texto": "Fechas de promociones",
+      "href": "https://somosbelcorpqa.s3.amazonaws.com/FileConsultoras/PE/cronograma-dias-de-venta-peru-2019.pdf",
+      "selector_aria": null
+    },
+    {
+      "texto": "Códigos sanitarios",
+      "href": "https://somosbelcorpprd.s3.us-east-1.amazonaws.com/FileConsultoras/PE/ListadoCodigosNSO.pdf",
+      "selector_aria": null
+    },
+    {
+      "texto": "Políticas post venta",
+      "href": "https://somosbelcorpprd.s3.amazonaws.com/FileConsultoras/PE/Post-Venta_SB_PE.pdf",
+      "selector_aria": null
+    },
+    {
+      "texto": "Términos y condiciones - Mi Tienda Online",
+      "href": "https://somosbelcorpprd.s3.amazonaws.com/FileConsultoras/PE/Terminos_y_Condiciones_TiendaVirtual_V2.pdf",
+      "selector_aria": null
+    },
+    {
+      "texto": "Terminos y condiciones contrato de compra venta de productos",
+      "href": "https://somosbelcorpprd.s3.us-east-1.amazonaws.com/FileConsultoras/PE/Terminos_y_Condiciones_ContratoSB.pdf",
+      "selector_aria": null
+    },
+    {
+      "texto": "Autorización de consulta en buró de crédito",
+      "href": "https://somosbelcorpprd.s3.us-east-1.amazonaws.com/FileConsultoras/PE/Autorizacion_validacion_crediticia-SB-PE.pdf",
+      "selector_aria": null
+    }
+  ]
+}

@@ -32,6 +32,9 @@ with open(CONFIG_PATH, "r", encoding="utf-8") as _f:
 
 BASE_URL = CONFIG["base_url"]
 
+# Selector de artículos en PLP — soporta entorno antiguo y nuevo
+PLP_ARTICLE = "#FichasProductosBuscador article, article[data-card-cuv]"
+
 # ── Contexto global del flujo activo (se adjunta a cada evento GA4 capturado) ──
 current_flow = None
 
@@ -94,6 +97,7 @@ MINI_SEARCH_TERM = os.getenv("BELCORP_MINI_SEARCH", CONFIG["inputs"]["mini_searc
 
 # ── Selectores de botones de cierre de popup (orden de prioridad) ──────
 SELECTORES_POPUP = [
+    # Botones close genéricos (clase/atributo)
     "button.cerrar-modal",
     "button.btn-cerrar",
     "button.close",
@@ -107,6 +111,15 @@ SELECTORES_POPUP = [
     "[data-dismiss='modal']",
     ".boton-cerrar",
     "#btnCerrarModal",
+    # Textos de dismiss en el nuevo portal
+    "button:has-text('Entendido')",
+    "button:has-text('Entiendo')",
+    "button:has-text('Aceptar')",
+    "button:has-text('Si, acepto')",
+    "button:has-text('No, gracias')",
+    "button:has-text('Mantengo mis ofertas')",
+    "button:has-text('No, mantener')",
+    "a:has-text('CERRAR')",
 ]
 
 
@@ -259,21 +272,26 @@ def login(page) -> None:
 # ══════════════════════════════════════════════════════════════════════
 # Manejo de popups
 # ══════════════════════════════════════════════════════════════════════
-def cerrar_popups(page) -> None:
+def cerrar_popups(page, max_rondas=4) -> None:
     """
-    Intenta cerrar cualquier popup/modal visible probando los selectores
-    conocidos en orden. Útil para llamar manualmente tras una navegación.
+    Cierra todos los popups/modals visibles en rondas hasta que no quede ninguno.
+    Útil tras una navegación donde aparecen múltiples modals en cascada.
     """
-    for selector in SELECTORES_POPUP:
-        try:
-            btn = page.locator(selector).first
-            if btn.count() and btn.is_visible(timeout=300):
-                btn.click()
-                print(f"   🚫 Popup cerrado ({selector})")
-                page.wait_for_timeout(400)
-                return
-        except Exception:
-            continue
+    for ronda in range(max_rondas):
+        cerrado_algo = False
+        for selector in SELECTORES_POPUP:
+            try:
+                btn = page.locator(selector).first
+                if btn.count() and btn.is_visible(timeout=200):
+                    btn.click()
+                    print(f"   🚫 Popup cerrado ({selector.split(':')[-1][:30]})")
+                    page.wait_for_timeout(500)
+                    cerrado_algo = True
+                    break  # Reiniciar la ronda después de cada cierre
+            except Exception:
+                continue
+        if not cerrado_algo:
+            break  # No más popups visibles
 
 
 def registrar_handler_popups(page) -> None:
@@ -315,6 +333,51 @@ def abrir_buscador_header(page):
         buscador = page.locator("input[placeholder*='uscar']").first
         buscador.wait_for(state="visible", timeout=10000)
     return buscador
+
+
+def _navegar_via_link(page, keywords, url_fallback=None):
+    """
+    Busca en el DOM un link que coincida con alguna keyword (en href, aria-label o texto),
+    extrae su href y navega directamente. Robusto ante cambios de entorno.
+    Retorna el href navegado, o None si falló.
+    """
+    href = page.evaluate("""(keywords) => {
+        const kws = keywords.map(k => k.toLowerCase());
+        const links = document.querySelectorAll('a[href]');
+        // Primero links visibles
+        for (const a of links) {
+            if (a.offsetParent === null || !a.href) continue;
+            const text  = (a.textContent || '').trim().toLowerCase();
+            const label = (a.getAttribute('aria-label') || '').toLowerCase();
+            const href  = (a.href || '').toLowerCase();
+            if (kws.some(k => text.includes(k) || label.includes(k) || href.includes(k)))
+                return a.href;
+        }
+        // Fallback: cualquier link aunque no visible
+        for (const a of links) {
+            if (!a.href) continue;
+            const text  = (a.textContent || '').trim().toLowerCase();
+            const label = (a.getAttribute('aria-label') || '').toLowerCase();
+            const href  = (a.href || '').toLowerCase();
+            if (kws.some(k => text.includes(k) || label.includes(k) || href.includes(k)))
+                return a.href;
+        }
+        return null;
+    }""", keywords)
+
+    def _goto(url):
+        page.goto(url)
+        page.wait_for_load_state("domcontentloaded")
+        page.wait_for_timeout(2500)
+        verificar_sesion(page)
+
+    if href:
+        _goto(href)
+        return href
+    elif url_fallback:
+        _goto(url_fallback)
+        return url_fallback
+    return None
 
 
 def ir_a_pedido(page) -> None:
@@ -365,7 +428,7 @@ def click_categoria_esika(page) -> None:
     print("➡️  Categoría Ésika...")
     page.wait_for_selector('li[data-codigo="mar-esika"]', timeout=10000)
     page.click('li[data-codigo="mar-esika"]')
-    page.wait_for_selector("#FichasProductosBuscador article", timeout=10000)
+    page.wait_for_selector(PLP_ARTICLE, timeout=10000)
     print("✅ PLP Ésika cargada")
 
 
@@ -374,7 +437,7 @@ def click_categorias(page) -> None:
     print("➡️  Categoría Fragancias...")
     page.wait_for_selector('li[data-codigo="cat-fragancia"]', timeout=10000)
     page.click('li[data-codigo="cat-fragancia"]')
-    page.wait_for_selector("#FichasProductosBuscador article", timeout=10000)
+    page.wait_for_selector(PLP_ARTICLE, timeout=10000)
     print("✅ PLP Fragancias cargada")
 
 
@@ -422,8 +485,32 @@ def plp_agregar_directo(page):
     """
     print("🛒 PLP → buscando producto con botón 'Agregar'...")
     try:
-        page.wait_for_selector("#FichasProductosBuscador article", timeout=10000)
-        productos = page.query_selector_all("#FichasProductosBuscador article")
+        try:
+            page.wait_for_selector(PLP_ARTICLE, timeout=10000)
+        except Exception:
+            # La nueva UI del portal no usa article[data-card-cuv]; intentar cerrar
+            # modals y buscar productos por botón "Agregar" directamente
+            cerrar_popups(page)
+            page.wait_for_timeout(1500)
+            agregado = page.evaluate("""() => {
+                const btns = Array.from(document.querySelectorAll('button, a'));
+                for (const b of btns) {
+                    if ((b.innerText || '').trim().toLowerCase() === 'agregar'
+                        && b.offsetParent !== null) {
+                        b.click();
+                        return true;
+                    }
+                }
+                return false;
+            }""")
+            if agregado:
+                print("   ✅ Producto agregado via búsqueda JS directa (nueva UI)")
+                page.wait_for_timeout(2000)
+                return 1
+            print("   ❌ No hay artículos en PLP (nueva UI sin productos visibles)")
+            return None
+
+        productos = page.query_selector_all(PLP_ARTICLE)
         for idx, prod in enumerate(productos, 1):
             if producto_ya_agregado(prod, "plp"):
                 print(f"   ⏭️  Producto {idx} ya fue agregado → skip")
@@ -431,7 +518,11 @@ def plp_agregar_directo(page):
             texto = _btn_texto(prod)
             if texto and texto.lower() == "agregar":
                 print(f"   ✅ Producto {idx} → clic en 'Agregar'")
-                prod.query_selector("a#btnAgregalo").click()
+                btn = prod.query_selector("a#btnAgregalo, button#btnAgregalo, [class*='btnAgregar']")
+                if btn:
+                    btn.click()
+                else:
+                    page.evaluate("(el) => { const b = el.querySelector('[id*=btnAgregalo],[class*=btnAgregar]'); if(b) b.click(); }", prod)
                 page.wait_for_timeout(2000)
                 return idx
         print("   ❌ No se encontró producto con botón 'Agregar' en PLP")
@@ -454,8 +545,8 @@ def plp_ir_a_pdp(page, skip_index=None):
     """
     print("🔗 PLP → buscando producto para ir a PDP...")
     try:
-        page.wait_for_selector("#FichasProductosBuscador article", timeout=10000)
-        productos = page.query_selector_all("#FichasProductosBuscador article")
+        page.wait_for_selector(PLP_ARTICLE, timeout=10000)
+        productos = page.query_selector_all(PLP_ARTICLE)
 
         # Empezar desde después del producto ya agregado
         start = skip_index if skip_index else 0
@@ -470,7 +561,7 @@ def plp_ir_a_pdp(page, skip_index=None):
                 print(f"   ⏭️  Producto {idx}: '{texto_btn}' → skip")
                 continue
             # Producto con "Agregar" → intentar hover, luego fallback click en imagen
-            art = page.locator("#FichasProductosBuscador article").nth(idx - 1)
+            art = page.locator(PLP_ARTICLE).nth(idx - 1)
             img = art.locator("img").first
             if img.count():
                 img.scroll_into_view_if_needed(timeout=3000)
@@ -534,48 +625,90 @@ def _cerrar_alerta_general(page) -> bool:
 # ══════════════════════════════════════════════════════════════════════
 # PDP – Agregar al carrito
 # ══════════════════════════════════════════════════════════════════════
-def _detectar_tipo_pdp(page):
+def map_pdp(page):
     """
-    Analiza el PDP actual y retorna un dict con el tipo de producto detectado.
-    Tipos posibles:
-      - 'ya_agregado':     producto ya en el pedido (no hay nada que hacer)
-      - 'simple':          click directo en Agregar (sin selecciones)
-      - 'seleccion_multi': requiere seleccionar opciones (tono, arma tu oferta)
-      - 'sin_stock':       botón deshabilitado sin selecciones pendientes
-      - 'desconocido':     no se pudo detectar
+    Mapea el estado actual de la PDP y retorna un dict de decisión.
+
+    Tipos:
+      ya_agregado     — producto ya en el pedido, nada que hacer
+      simple          — click directo en Agregar
+      seleccion_multi — requiere elegir opciones (tono, arma tu oferta)
+      cantidad_minima — requiere alcanzar una cantidad mínima antes de agregar
+      cantidad_variable — tiene controles +/- pero sin mínimo obligatorio
+      agotado         — sin stock
+      sin_boton       — no hay botón principal visible
     """
-    info = page.evaluate("""
+    return page.evaluate("""
         () => {
-            const btn = document.querySelector('a#btnAgregalo, a.btn_validar_alertas, button#btnAgregalo');
-            const selecciones = document.querySelectorAll(
-                'button.tono_select_opt[btn-show-types-tones-modal], button[btn-show-types-tones-modal]'
+            // ── Botón principal ─────────────────────────────────────────
+            const btn = document.querySelector(
+                'a#btnAgregalo, button#btnAgregalo, a.btn_validar_alertas, button.btn_validar_alertas'
             );
+
+            // ── Ya agregado ──────────────────────────────────────────────
             const cajaAgregado = document.querySelector('div.caja_producto_agregado');
-            const cajaVisible = cajaAgregado && cajaAgregado.offsetParent !== null;
+            if (cajaAgregado && cajaAgregado.offsetParent !== null)
+                return {tipo: 'ya_agregado', puede_agregar: false};
 
-            if (!btn) return {tipo: 'desconocido', razon: 'sin boton principal'};
+            if (!btn) return {tipo: 'sin_boton', puede_agregar: false};
 
-            const texto = (btn.innerText || '').trim();
-            const deshabilitado = btn.classList.contains('btn_deshabilitado_ficha')
-                               || btn.classList.contains('disabled')
-                               || btn.hasAttribute('disabled');
-            const totalSelecciones = selecciones.length;
+            const texto  = (btn.innerText || '').trim();
+            const disabled = btn.classList.contains('btn_deshabilitado_ficha')
+                          || btn.classList.contains('disabled')
+                          || btn.hasAttribute('disabled');
 
-            // Ya agregado: deshabilitado sin selecciones pendientes, o caja visible
-            if (cajaVisible) return {tipo: 'ya_agregado', texto: texto};
-            if (deshabilitado && totalSelecciones === 0) return {tipo: 'ya_agregado', texto: texto};
+            // ── Selecciones obligatorias (tono, arma tu oferta) ─────────
+            const selecciones = document.querySelectorAll('button[btn-show-types-tones-modal]');
+            if (selecciones.length > 0)
+                return {tipo: 'seleccion_multi', puede_agregar: true,
+                        texto: texto, selecciones: selecciones.length};
 
-            // Sin stock: deshabilitado pero con selecciones = puede que falten opciones
-            if (deshabilitado && totalSelecciones > 0) return {tipo: 'seleccion_multi', texto: texto, selecciones: totalSelecciones};
+            // ── Controles de cantidad (+/-) ──────────────────────────────
+            const masBtn   = document.querySelector('.mas_rangos:not([disabled])');
+            const menosBtn = document.querySelector('.menos_rangos:not([disabled])');
+            const tieneControles = !!(masBtn || menosBtn);
 
-            // Con selecciones obligatorias
-            if (totalSelecciones > 0) return {tipo: 'seleccion_multi', texto: texto, selecciones: totalSelecciones};
+            // Valor actual de cantidad
+            const inputCantidad = document.querySelector(
+                'input#txtCantidad, input.txt_cantidad_pedido_new, input[name*="Cantidad"]'
+            );
+            const cantidadActual = inputCantidad ? (parseInt(inputCantidad.value) || 1) : 1;
 
-            // Simple
-            return {tipo: 'simple', texto: texto};
+            // Detectar mínimo requerido desde textos visibles
+            let cantidadMinima = 0;
+            const bodyText = document.body.innerText || '';
+            const mPatterns = [
+                /m[íi]nimo[:\\s]+([0-9]+)/i,
+                /([0-9]+)\\s+und(?:\\.|idades?)?\\s+m[íi]nimo/i,
+                /m[íi]nimo\\s+de\\s+([0-9]+)/i,
+                /compra\\s+m[íi]nima[:\\s]+([0-9]+)/i
+            ];
+            for (const pat of mPatterns) {
+                const m = bodyText.match(pat);
+                if (m) { cantidadMinima = parseInt(m[1]); break; }
+            }
+
+            if (tieneControles && cantidadMinima > 1)
+                return {tipo: 'cantidad_minima', puede_agregar: true, texto: texto,
+                        cantidad_minima: cantidadMinima, cantidad_actual: cantidadActual};
+
+            if (tieneControles)
+                return {tipo: 'cantidad_variable', puede_agregar: true, texto: texto,
+                        cantidad_actual: cantidadActual};
+
+            // ── Ya agregado (botón deshabilitado sin contexto de selección) ─
+            if (disabled)
+                return {tipo: 'ya_agregado', puede_agregar: false, texto: texto};
+
+            // ── Simple ───────────────────────────────────────────────────
+            return {tipo: 'simple', puede_agregar: true, texto: texto};
         }
     """)
-    return info
+
+
+# Alias de compatibilidad para código legacy
+def _detectar_tipo_pdp(page):
+    return map_pdp(page)
 
 
 def _pdp_completar_selecciones(page):
@@ -660,6 +793,23 @@ def _pdp_completar_selecciones(page):
     return True
 
 
+def _pdp_incrementar_cantidad(page, cantidad_objetivo, cantidad_actual=1):
+    """Incrementa la cantidad al objetivo usando el botón + (.mas_rangos)."""
+    clicks = max(0, cantidad_objetivo - cantidad_actual)
+    if clicks == 0:
+        return
+    print(f"   📦 Incrementando cantidad: {cantidad_actual} → {cantidad_objetivo} ({clicks} clicks)")
+    for _ in range(clicks):
+        page.evaluate("""
+            () => {
+                const btn = document.querySelector('.mas_rangos:not([disabled])');
+                if (btn) btn.click();
+            }
+        """)
+        page.wait_for_timeout(300)
+    page.wait_for_timeout(500)
+
+
 def _pdp_click_agregar(page):
     """Click en botón principal Agregar de la PDP. Retorna True si ok."""
     page.wait_for_timeout(1000)
@@ -695,33 +845,40 @@ def _pdp_click_agregar(page):
 
 def pdp_agregar(page):
     """
-    Agrega el producto desde la PDP actual.
-    Detecta automáticamente el tipo de producto y actúa en consecuencia:
-      - simple:          click directo en Agregar
-      - seleccion_multi: completa selecciones, luego Agregar
-      - ya_agregado:     skip
-      - desconocido:     intenta agregar de todas formas
-    Retorna True si se agregó, False si se saltó.
+    Agrega el producto desde la PDP actual usando map_pdp() para decidir cómo actuar.
+
+    Tipos manejados:
+      ya_agregado      → skip (retorna False)
+      sin_boton        → skip (retorna False)
+      simple           → click directo en Agregar
+      seleccion_multi  → completar selecciones, luego Agregar
+      cantidad_minima  → incrementar cantidad al mínimo, luego Agregar
+      cantidad_variable → click directo (cantidad por defecto es válida)
     """
     print("🛍️  PDP → agregando al carrito...")
     try:
-        # 1) Detectar tipo de producto
-        tipo_info = _detectar_tipo_pdp(page)
-        tipo = tipo_info.get("tipo", "desconocido")
-        print(f"   🔍 Tipo detectado: {tipo} — texto: '{tipo_info.get('texto', '')}'")
+        mapa = map_pdp(page)
+        tipo = mapa.get("tipo", "sin_boton")
+        print(f"   🔍 Tipo: {tipo} — '{mapa.get('texto', '')}'")
 
-        # 2) Actuar según tipo
-        if tipo == "ya_agregado":
-            print("   ⏭️  Producto ya agregado → skip")
+        # No hay nada que hacer
+        if tipo in ("ya_agregado", "sin_boton"):
+            print(f"   ⏭️  {tipo} → skip")
             return False
 
+        # Completar selecciones obligatorias
         if tipo == "seleccion_multi":
             _pdp_completar_selecciones(page)
 
-        if tipo == "desconocido":
-            print(f"   ⚠️  Tipo desconocido ({tipo_info.get('razon', '')}), intentando agregar...")
+        # Incrementar cantidad al mínimo requerido
+        elif tipo == "cantidad_minima":
+            _pdp_incrementar_cantidad(
+                page,
+                mapa.get("cantidad_minima", 1),
+                mapa.get("cantidad_actual", 1)
+            )
 
-        # 3) Click en botón principal
+        # Intentar click en botón principal
         resultado = _pdp_click_agregar(page)
         if resultado.get("ok"):
             print(f"   Botón PDP: '{resultado.get('texto', '')}'")
@@ -730,7 +887,9 @@ def pdp_agregar(page):
             print("   ✅ Agregado desde PDP")
             return True
         else:
-            print(f"   ⚠️  Botón PDP: {resultado.get('error', 'desconocido')} — texto: '{resultado.get('texto', '')}'")
+            # Si falla, re-mapear y loguear el estado actual para diagnóstico
+            mapa_post = map_pdp(page)
+            print(f"   ⚠️  No se pudo agregar — estado post: {mapa_post.get('tipo')} | {resultado.get('error', '')}")
             return False
 
     except Exception as e:
@@ -1067,7 +1226,7 @@ def ejecutar_flujo_plp(page, flow_name: str, label: str, navegar_fn) -> None:
         cerrar_popups(page)
         pdp_agregar(page)
         page.go_back()
-        page.wait_for_selector("#FichasProductosBuscador article", timeout=10000)
+        page.wait_for_selector(PLP_ARTICLE, timeout=10000)
 
 
 def ejecutar_flujo_carrusel(page, flow_name: str, label: str, navegar_fn) -> None:
@@ -1541,7 +1700,7 @@ def flujo_7_mini_buscador(page) -> None:
                 pass
             # Intentar usar PLP estándar
             try:
-                page.wait_for_selector("#FichasProductosBuscador article", timeout=10000)
+                page.wait_for_selector(PLP_ARTICLE, timeout=10000)
                 pdp_idx = plp_ir_a_pdp(page)
                 if pdp_idx:
                     pdp_agregar(page)
@@ -1577,13 +1736,13 @@ def flujo_8_liquidacion(page) -> None:
         p.goto(f"{BASE_URL}/")
         p.wait_for_load_state("domcontentloaded")
         p.wait_for_timeout(2000)
+        verificar_sesion(p)
         cerrar_popups(p)
-        link = p.locator('a[aria-label="Liquidaciones"]').first
-        link.wait_for(state="visible", timeout=10000)
-        link.scroll_into_view_if_needed(timeout=3000)
-        link.click()
-        p.wait_for_timeout(3000)
-        print("✅ En Liquidaciones")
+        href = _navegar_via_link(p, ["liquidacion", "liquidación", "liquidaciones"],
+                                 f"{BASE_URL.rstrip('/')}/liquidacion")
+        p.wait_for_timeout(1500)
+        cerrar_popups(p)
+        print(f"✅ En Liquidaciones ({href})")
 
     ejecutar_flujo_plp(page, FLOW_LIQUIDACION, "Liquidación PLP", navegar_liquidacion)
 
@@ -1598,13 +1757,13 @@ def flujo_9_festivales_plp(page) -> None:
         p.goto(f"{BASE_URL}/")
         p.wait_for_load_state("domcontentloaded")
         p.wait_for_timeout(2000)
+        verificar_sesion(p)
         cerrar_popups(p)
-        link = p.locator('a[aria-label="FESTIVAL TOTAL PEDIDO"]').first
-        link.wait_for(state="visible", timeout=10000)
-        link.scroll_into_view_if_needed(timeout=3000)
-        link.click()
-        p.wait_for_timeout(3000)
-        print("✅ En Festivales")
+        href = _navegar_via_link(p, ["festival", "festivales"],
+                                 f"{BASE_URL.rstrip('/')}/festivales")
+        p.wait_for_timeout(1500)
+        cerrar_popups(p)
+        print(f"✅ En Festivales ({href})")
 
     ejecutar_flujo_plp(page, FLOW_FESTIVALES_PLP, "Festivales PLP", navegar_festivales)
 
@@ -1623,15 +1782,14 @@ def flujo_10_festivales_carrusel(page) -> None:
     page.goto(f"{BASE_URL}/")
     page.wait_for_load_state("domcontentloaded")
     page.wait_for_timeout(2000)
+    verificar_sesion(page)
     cerrar_popups(page)
-    link = page.locator('a[aria-label="FESTIVAL TOTAL PEDIDO"]').first
-    link.wait_for(state="visible", timeout=10000)
-    link.scroll_into_view_if_needed(timeout=3000)
-    link.click()
+    href = _navegar_via_link(page, ["festival", "festivales"],
+                             f"{BASE_URL.rstrip('/')}/festivales")
     page.wait_for_load_state("domcontentloaded")
-    page.wait_for_timeout(3000)
+    page.wait_for_timeout(2000)
     cerrar_popups(page)
-    print("✅ En Festivales")
+    print(f"✅ En Festivales ({href})")
 
     # Buscar el carrusel de premios (está arriba de la PLP)
     print("🎁 Buscando carrusel de premios...")

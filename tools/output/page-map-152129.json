@@ -1,0 +1,820 @@
+{
+  "url": "https://www.somosbelcorp.com/buscador",
+  "titulo": "Somos Belcorp",
+  "accionables": [
+    {
+      "tipo": "button",
+      "texto": "Entendido",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.center-block.text-center.text-bold",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Entendido')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "No, gracias",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnRechaza",
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('No, gracias')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Si, acepto",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnAcepta",
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Si, acepto')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Entendido",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnEntendido",
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Entendido')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Digita el código aquí",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.checkout-search-btn.fs-16.text-bold",
+      "selector_aria": null,
+      "selector_data": "[data-redireccionar-boton=\"\"]",
+      "selector_texto": "button:has-text('Digita el código aquí')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "No, mantener",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.fs-16.font-weight-bold.border-0",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('No, mantener')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Sí, cambiar",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.fs-16.font-weight-bold.border-0",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Sí, cambiar')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#cerrar_modal_lateral",
+      "selector_clase": "button.button_cerrar",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Cerrar sesión",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.text-center.text-bold.popup__somos__belcorp__btn",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Cerrar sesión')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Ingresar",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.center-block.text-center.text-bold",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Ingresar')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Continuar",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.text-center.text-bold.multimarca-background-color",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Continuar')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Ir a pedido",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.text-center.text-bold.multimarca-background-color",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Ir a pedido')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Ver detalle",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.ver-details-btn",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Ver detalle')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "¡Reemplazar por la Mejor oferta!",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnReemplazarOferta",
+      "selector_clase": "button.btn-oferta-mejor.primary-btn",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('¡Reemplazar por la Mejor oferta!')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Mantengo mis ofertas seleccionadas",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#skipBtn",
+      "selector_clase": "button.secondary-btn",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Mantengo mis ofertas seleccionadas')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Entiendo",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.btn_aceptar",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Entiendo')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "×",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.modal-close",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('×')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "button",
+      "texto": "Sí, eliminar",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "button.modal-confirm",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "button:has-text('Sí, eliminar')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Fragancias\n                486 productos",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.d-flex.categoria_producto_enlace",
+      "selector_aria": null,
+      "selector_data": "[data-nombre-categoria=\"Fragancias\"]",
+      "selector_texto": "a:has-text('Fragancias\n                486 productos')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Maquillaje\n                168 productos",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.d-flex.categoria_producto_enlace",
+      "selector_aria": null,
+      "selector_data": "[data-nombre-categoria=\"Maquillaje\"]",
+      "selector_texto": "a:has-text('Maquillaje\n                168 productos')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Cuidado Personal\n                208 productos",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.d-flex.categoria_producto_enlace",
+      "selector_aria": null,
+      "selector_data": "[data-nombre-categoria=\"Cuidado Personal\"]",
+      "selector_texto": "a:has-text('Cuidado Personal\n                208 pro')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Tratamiento Facial\n                129 productos",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.d-flex.categoria_producto_enlace",
+      "selector_aria": null,
+      "selector_data": "[data-nombre-categoria=\"Tratamiento Facial\"]",
+      "selector_texto": "a:has-text('Tratamiento Facial\n                129 p')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Bijouterie\n                106 productos",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.d-flex.categoria_producto_enlace",
+      "selector_aria": null,
+      "selector_data": "[data-nombre-categoria=\"Bijouterie\"]",
+      "selector_texto": "a:has-text('Bijouterie\n                106 productos')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Moda & Hogar\n                94 productos",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.d-flex.categoria_producto_enlace",
+      "selector_aria": null,
+      "selector_data": "[data-nombre-categoria=\"Moda & Hogar\"]",
+      "selector_texto": "a:has-text('Moda & Hogar\n                94 producto')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Apoyo\n                4 productos",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.d-flex.categoria_producto_enlace",
+      "selector_aria": null,
+      "selector_data": "[data-nombre-categoria=\"Apoyo\"]",
+      "selector_texto": "a:has-text('Apoyo\n                4 productos')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Agregar",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": "#btnAgregalo",
+      "selector_clase": "a.btn_agregalo_producto.btn_defecto.w-100",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Agregar')",
+      "rect": {
+        "top": 257,
+        "left": 13
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "VER MÁS RESULTADOS",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": "#BotonVerTodosResultados",
+      "selector_clase": "a.enlace_ver_todos_los_resultados.text-center.text-uppercase",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('VER MÁS RESULTADOS')",
+      "rect": {
+        "top": 609,
+        "left": 55
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Ver más ofertas similares",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#botonOfertasSimilares",
+      "selector_clase": "a.enlace_ver_todos_los_resultados.text-center.text-bold",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Ver más ofertas similares')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Entendido",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.btn_ok_mobile.btn-aceptar.d-block",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Entendido')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "OK",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.btn_ok_mobile",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('OK')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "OK",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.btn_ok_mobile",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('OK')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Entendido",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.btn_ok_mobile.d-block.center-block",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Entendido')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "OK",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.btn_ok_mobile",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('OK')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Ok",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.btn_ok_mobile",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Ok')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Modificar mi pedido",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.btn_ok_mobile.btn-aceptar",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Modificar mi pedido')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Cancelar",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.btn_ok_mobile.btn_ok_mobile-inline.cancelar-mobile",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Cancelar')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Aceptar",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.btn_ok_mobile.btn_ok_mobile-inline.aceptar-mobile",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Aceptar')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "No eliminarlo.",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.btn_ok_mobile.btn_ok_mobile-inline",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('No eliminarlo.')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "ELIMINAR",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.btn_ok_mobile.btn_ok_mobile-inline.aceptar-mobile",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('ELIMINAR')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Cancelar",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.btn_ok_mobile.btn_ok_mobile-inline",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Cancelar')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "WA",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#HiddenRedesSocialesWA",
+      "selector_clase": null,
+      "selector_aria": null,
+      "selector_data": "[data-action=\"share/whatsapp/share\"]",
+      "selector_texto": "a:has-text('WA')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "close",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.ui-dialog-titlebar-close.ui-corner-all",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('close')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "No, gracias",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.btn__sb__primary--cancel",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('No, gracias')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Confirmar",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.w-100.border-radius-4.center-block",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Confirmar')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "Entendido",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "a.w-100.border-radius-4.center-block",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "a:has-text('Entendido')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "fd-button",
+      "texto": "Entendido",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "fd-button.pl-0.pr-0.position-relative",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "fd-button:has-text('Entendido')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "fd-button",
+      "texto": "Ok",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "fd-button.pl-0.pr-0.fd-mb-16",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "fd-button:has-text('Ok')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "fd-button",
+      "texto": "Entendido",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "fd-button.pl-0.pr-0.fd-mb-16",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "fd-button:has-text('Entendido')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnCerrar",
+      "selector_clase": "a.popup__somos__belcorp__icono__cerrar",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "a",
+      "texto": "",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#btnCerrar",
+      "selector_clase": "a.popup__somos__belcorp__icono__cerrar",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "span",
+      "texto": "",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": "#closeBtn",
+      "selector_clase": "span.close-btn.hide",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": null,
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    },
+    {
+      "tipo": "div",
+      "texto": "Agregar",
+      "visible": true,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "div.w-100.seccion_agregar.button_100",
+      "selector_aria": null,
+      "selector_data": "[data-detalle-item=\"0_0\"]",
+      "selector_texto": "div:has-text('Agregar')",
+      "rect": {
+        "top": 249,
+        "left": 13
+      }
+    },
+    {
+      "tipo": "div",
+      "texto": "Si eliminas este productoperderás  de ganancia",
+      "visible": false,
+      "habilitado": true,
+      "selector_id": null,
+      "selector_clase": "div.modal-body.mobile-padding-fix",
+      "selector_aria": null,
+      "selector_data": null,
+      "selector_texto": "div:has-text('Si eliminas este productoperderás  de ga')",
+      "rect": {
+        "top": 0,
+        "left": 0
+      }
+    }
+  ],
+  "obstaculos": [
+    {
+      "tipo": "iframe",
+      "selector": "#_hjSafeContext_61355188",
+      "src": "about:blank"
+    },
+    {
+      "tipo": "iframe",
+      "selector": "#xaxis_dm_2352142009",
+      "src": "https://cdn-akamai.mookie1.com/html/x71.html"
+    },
+    {
+      "tipo": "iframe",
+      "selector": "#insider-worker",
+      "src": "https://belcorp.api.useinsider.com/worker-new.html"
+    }
+  ],
+  "formularios": [],
+  "navegacion": []
+}
